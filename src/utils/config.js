@@ -13,7 +13,7 @@ export const IS_PROD = !IS_DEV
 
 var CALCULATED_API_URL
 if (window.cordova) {
-  CALCULATED_API_URL = 'https://api.scifeedback.org'
+  CALCULATED_API_URL = 'https://api.music-pattern.org'
 } else {
   CALCULATED_API_URL = IS_DEV
     ? 'http://localhost'
