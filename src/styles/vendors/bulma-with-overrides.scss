@@ -1,0 +1,69 @@
+// TODO: eventually remove unused dependencies
+@import "~bulma/sass/utilities/_all";
+@import "~bulma/sass/base/_all";
+@import "~bulma/sass/elements/_all";
+@import "~bulma/sass/components/_all";
+@import "~bulma/sass/grid/_all";
+@import "~bulma/sass/layout/_all";
+
+
+.button {
+  // height: auto;
+  &:focus {
+    outline: none;
+  }
+}
+
+[disabled] {
+  opacity: $button-disabled-opacity;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  vertical-align: middle;
+}
+
+.navbar {
+  &.is-primary {
+    .navbar-brand {
+      & > .navbar-item:hover {
+        background: transparent !important; // Bug?
+      }
+    }
+
+  }
+  .icon {
+    margin-right: 0.5rem;
+  }
+}
+
+.field {
+  &.has-addons {
+    .control {
+      .button {
+        border-width: $control-border-width;
+        height: 100%;
+        &:focus {
+          border-color: $grey-light;
+
+          &:not(:active) {
+            box-shadow: none;
+          }
+        }
+      }
+      &:not(:last-child) {
+        .input {
+          border-right: none;
+        }
+      }
+      &:last-child {
+        .button {
+          border-left: none;
+        }
+      }
+    }
+
+    &:focus-within .button {
+      border-color: $input-focus-border-color;
+    }
+  }
+}
