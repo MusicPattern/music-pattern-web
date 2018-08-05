@@ -24,7 +24,7 @@ const Root = () => {
                 {...route}
                 render={match => {
                   document.title =
-                    (route.title ? `${route.title} - ` : '') + 'Reval'
+                    (route.title ? `${route.title} - ` : '') + 'Music Pattern'
                   return route.render(match)
                 }}
               />

@@ -88,7 +88,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "postinstall": "cd node_modules && ln -sf ../../shared pass-culture-shared",
+    "postinstall": "if [ -d \"../shared\" ]; then cd node_modules && rm -rf pass-culture-shared && ln -sf ../../shared pass-culture-shared && cd ../../shared && yarn run compile; fi",
     "prettier": "$(yarn bin)/prettier --config config/prettier.js --write 'src/**/*.js'",
     "test": "node scripts/jesttest.js --env=jsdom"
   },
