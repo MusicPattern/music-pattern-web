@@ -31,7 +31,6 @@ class SignupPage extends Component {
           <div className='hero-body'>
             <h1 className='title is-spaced is-1'>
               <Logo />
-              eval account
             </h1>
             <Form
               action='/users'

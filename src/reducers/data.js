@@ -1,11 +1,10 @@
 import { createData } from 'pass-culture-shared'
 
 const data = createData({
-  articles: [],
-  evaluations: [],
-  reviews: [],
+  harmonies: [],
+  notes: [],
+  scales: [],
   users: [],
-  verdicts: []
 })
 
 export default data

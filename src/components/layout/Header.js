@@ -55,22 +55,10 @@ class Header extends Component {
                   </span>
                 </NavLink>
                 <div className="navbar-dropdown is-right">
-                  <NavLink to={'/articles'} className='navbar-item'>
+                  <NavLink to={'/harmonies'} className='navbar-item'>
                     <span className='icon'><Icon svg='newspaper' /></span>
-                    <span>Articles</span>
+                    <span>Harmonies</span>
                   </NavLink>
-                  <NavLink to={'/reviews'} className='navbar-item'>
-                    <span className='icon'><Icon svg='ico-eye' /></span>
-                    <span>Reviews</span>
-                  </NavLink>
-                  {
-                    false && (
-                      <NavLink to={'/verdicts'} className='navbar-item'>
-                        <span className='icon'><Icon svg='ico-verdict' /></span>
-                        <span>Verdicts</span>
-                      </NavLink>
-                    )
-                  }
                   <SignoutButton tagName='a' className='navbar-item'>
                     <span className='icon'><Icon svg='ico-deconnect' /></span>
                     <span>Déconnexion</span>

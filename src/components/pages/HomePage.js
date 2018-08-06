@@ -14,11 +14,9 @@ class HomePage extends Component {
         fullscreen
         name='home'
       >
-
         <section className='section columns is-vcentered is-medium'>
           OUAI
         </section>
-
       </Main>
     )
   }

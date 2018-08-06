@@ -29,7 +29,6 @@ class SigninPage extends Component {
           <div className='hero-body'>
             <h1 className='title is-spaced is-1'>
               <Logo />
-              eval
             </h1>
             <Form
               action='users/signin'
