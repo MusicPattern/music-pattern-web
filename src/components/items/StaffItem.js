@@ -1,24 +1,22 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router'
-import { compose } from 'redux'
+
+import BarItem from './BarItem'
+import barsSelector from '../../selectors/bars'
 
 const StaffItem = ({
+  bars,
   staff
 }) => {
-  const {
-    bars
-  } = (staff || {})
-  console.log('bars', bars)
   return (
     <div className='box'>
+      {bars.map(bar => <BarItem key={bar.id} bar={bar} />)}
     </div>
   )
 }
 
-export default compose(
-  withRouter,
-  connect(
-    (state, ownProps) => ({})
-  )
+export default connect(
+  (state, ownProps) => ({
+    bars: barsSelector(state, ownProps.staff.id)
+  })
 )(StaffItem)

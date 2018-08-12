@@ -1,7 +1,10 @@
 import createCachedSelector from "re-reselect"
 
+import scoreSelector from './score'
+
 export default createCachedSelector(
   state => state.data.staves,
-  (state, scoreId) => scoreId,
-  (staves, scoreId) => staves.filter(staff => staff.scoreId === scoreId)
+  scoreSelector,
+  (staves, score) => staves.filter(staff =>
+    score.scoreStavesIds.includes(staff.id))
 )((state, scoreId) => scoreId || '')

@@ -8,13 +8,13 @@ export const harmonyNormalizer = {
 }
 
 export const scoreNormalizer = {
-  staves: {
+  scoreStaves: {
     key: "staves",
     normalizer: {
-      bars: {
+      staffBars: {
         key: "bars",
         normalizer: {
-          voices: {
+          barVoices: {
             key: "voices",
             normalizer: {
               melody: "melodies",

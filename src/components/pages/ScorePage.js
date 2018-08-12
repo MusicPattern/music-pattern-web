@@ -36,7 +36,6 @@ class ScorePage extends Component {
     const {
       name
     } = (score || {})
-    console.log('staves', staves)
     return (
       <Main
         fullscreen
