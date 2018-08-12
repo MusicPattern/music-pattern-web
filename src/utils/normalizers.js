@@ -6,3 +6,14 @@ export const harmonyNormalizer = {
     }
   }
 }
+
+export const scoreNormalizer = {
+  staves: {
+    key: 'staves',
+    normalizer: {
+      voices: {
+        key: 'voices'
+      }
+    }
+  }
+}

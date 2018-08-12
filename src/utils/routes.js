@@ -3,6 +3,8 @@ import { Redirect } from 'react-router'
 
 import HarmoniesPage from '../components/pages/HarmoniesPage'
 import HomePage from '../components/pages/HomePage'
+import ScorePage from '../components/pages/ScorePage'
+import ScoresPage from '../components/pages/ScoresPage'
 import SigninPage from '../components/pages/SigninPage'
 import SignupPage from '../components/pages/SignupPage'
 
@@ -23,6 +25,18 @@ const routes = [
     path: '/home',
     title: "Home",
     render: () => <HomePage />,
+  },
+  {
+    exact: true,
+    path: '/scores',
+    title: "Scores",
+    render: () => <ScoresPage />,
+  },
+  {
+    exact: true,
+    path: '/score/:scoreId',
+    title: "Score",
+    render: () => <ScorePage />,
   },
   {
     exact: true,

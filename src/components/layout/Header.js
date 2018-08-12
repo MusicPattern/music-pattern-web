@@ -59,6 +59,10 @@ class Header extends Component {
                     <span className='icon'><Icon svg='newspaper' /></span>
                     <span>Harmonies</span>
                   </NavLink>
+                  <NavLink to={'/scores'} className='navbar-item'>
+                    <span className='icon'><Icon svg='newspaper' /></span>
+                    <span>Scores</span>
+                  </NavLink>
                   <SignoutButton tagName='a' className='navbar-item'>
                     <span className='icon'><Icon svg='ico-deconnect' /></span>
                     <span>Déconnexion</span>
