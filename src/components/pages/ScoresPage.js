@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 
 import ScoreItem from '../items/ScoreItem'
 import Main from '../layout/Main'
-import { harmonyNormalizer } from '../../utils/normalizers'
+import { scoreNormalizer } from '../../utils/normalizers'
 
 class ScoresPage extends Component {
   handleDataRequest = (handleSuccess, handleFail) => {
@@ -16,7 +16,7 @@ class ScoresPage extends Component {
       'scores', {
         handleSuccess,
         handleFail,
-        normalizer: harmonyNormalizer
+        normalizer: scoreNormalizer
       }))
   }
 

@@ -1,21 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import { NavLink } from 'react-router-dom'
 import { compose } from 'redux'
 
-const ScoreItem = ({
-  score
+const StaffItem = ({
+  staff
 }) => {
   const {
-    id,
-    name
-  } = (score || {})
+    bars
+  } = (staff || {})
+  console.log('bars', bars)
   return (
     <div className='box'>
-      <NavLink to={`/scores/${id}`}>
-        {name}
-      </NavLink>
     </div>
   )
 }
@@ -25,4 +21,4 @@ export default compose(
   connect(
     (state, ownProps) => ({})
   )
-)(ScoreItem)
+)(StaffItem)

@@ -34,7 +34,7 @@ const routes = [
   },
   {
     exact: true,
-    path: '/score/:scoreId',
+    path: '/scores/:scoreId',
     title: "Score",
     render: () => <ScorePage />,
   },

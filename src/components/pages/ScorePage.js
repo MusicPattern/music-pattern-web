@@ -6,9 +6,11 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { compose } from 'redux'
 
+import StaffItem from '../items/StaffItem'
 import Main from '../layout/Main'
-import { harmonyNormalizer } from '../../utils/normalizers'
+import { scoreNormalizer } from '../../utils/normalizers'
 import scoreSelector from '../../selectors/score'
+import stavesSelector from '../../selectors/staves'
 
 class ScorePage extends Component {
   handleDataRequest = (handleSuccess, handleFail) => {
@@ -22,18 +24,27 @@ class ScorePage extends Component {
       `scores/${scoreId}`, {
         handleSuccess,
         handleFail,
-        normalizer: harmonyNormalizer
+        normalizer: scoreNormalizer
       }))
   }
 
   render () {
+    const {
+      score,
+      staves
+    } = this.props
+    const {
+      name
+    } = (score || {})
+    console.log('staves', staves)
     return (
       <Main
         fullscreen
         handleDataRequest={this.handleDataRequest}
-        name='scores'>
-        <section className='section columns is-vcentered is-medium'>
-          OUAI
+        name='score'>
+        <section className='section'>
+          {name}
+          {staves.map(staff => <StaffItem key={staff.id} staff={staff} />)}
         </section>
       </Main>
     )
@@ -42,7 +53,14 @@ class ScorePage extends Component {
 
 export default compose(
   withRouter,
-  connect(state => ({
-
-  }))
+  connect(
+    (state, ownProps) => {
+      const { scoreId } = ownProps.match.params
+      const score = scoreSelector(state, scoreId)
+      return {
+        score,
+        staves: stavesSelector(state, scoreId),
+      }
+    }
+  )
 )(ScorePage)
