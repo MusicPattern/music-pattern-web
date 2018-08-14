@@ -21,9 +21,9 @@ if (window.cordova) {
 }
 export const API_URL = CALCULATED_API_URL
 
-export const THUMBS_URL = IS_DEV
-  ? `${API_URL}/storage/thumbs`
-  : `${API_URL}/storage/thumbs`
+export const THUMBS_URL = `${API_URL}/storage/thumbs`
+
+export const AUDIOS_URL = `${API_URL}/storage/audios`
 
 export function apiUrl(path) {
   if (!path) return

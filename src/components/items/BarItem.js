@@ -14,7 +14,7 @@ const BarItem = ({
   return (
     <div className='box'>
       {name}
-      {voices.map(voice => <VoiceItem key={voice.id} voice={voice} />)}
+      {voices.map(voice => <VoiceItem bar={bar} key={voice.id} voice={voice} />)}
     </div>
   )
 }

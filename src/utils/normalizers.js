@@ -8,21 +8,53 @@ export const harmonyNormalizer = {
 }
 
 export const scoreNormalizer = {
-  scoreStaves: {
-    key: "staves",
+  scoreInstruments: {
+    key: "scoreInstruments",
     normalizer: {
-      staffBars: {
-        key: "bars",
+      instrument: {
+        key: "instruments",
         normalizer: {
-          barVoices: {
-            key: "voices",
+          sounds: {
+            key: "sounds",
             normalizer: {
-              melody: "melodies",
-              rhythm: "rhythms"
+              pitch: "pitches",
+              sample: "samples"
             }
           }
         }
-      },
+      }
+    }
+  },
+  scoreStaves: {
+    key: "scoreStaves",
+    normalizer: {
+      staff: {
+        key: "staves",
+        normalizer: {
+          staffBars: {
+            key: "staffBars",
+            normalizer: {
+              bar: {
+                key: "bars",
+                normalizer: {
+                  barVoices: {
+                    key: "barVoices",
+                    normalizer: {
+                      voice: {
+                        key: "voices",
+                        normalizer: {
+                          melody: "melodies",
+                          rhythm: "rhythms"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+        }
+      }
     }
   }
 }
