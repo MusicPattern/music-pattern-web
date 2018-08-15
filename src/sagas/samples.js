@@ -1,7 +1,7 @@
 import { call, select, takeEvery } from 'redux-saga/effects'
 
+import { context } from '../utils/audio'
 import { AUDIOS_URL } from '../utils/config'
-import { context } from '../utils/music'
 
 function* fromWatchSuccessDataActions(action) {
   const samples = yield select(state => state.data.samples)
