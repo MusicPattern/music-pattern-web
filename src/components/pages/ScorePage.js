@@ -6,13 +6,20 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 
-import InstrumentItem from '../items/InstrumentItem'
-import StaffItem from '../items/StaffItem'
 import Main from '../layout/Main'
+import InstrumentsManager from '../managers/InstrumentsManager'
+import StavesManager from '../managers/StavesManager'
 import { scoreNormalizer } from '../../utils/normalizers'
-import instrumentsSelector from '../../selectors/instruments'
 import scoreSelector from '../../selectors/score'
-import stavesSelector from '../../selectors/staves'
+
+import Tone from 'tone'
+/*
+var synth = new Tone.Synth().toMaster()
+const part = new Tone.Part(function(time, pitch){
+  synth.triggerAttackRelease(pitch, "2n", time);
+}, [["0", 1], ["1", 2], ["2", "G#3"], ["3", "C3"]]);
+part.start(0);
+*/
 
 class ScorePage extends Component {
   handleDataRequest = (handleSuccess, handleFail) => {
@@ -32,9 +39,7 @@ class ScorePage extends Component {
 
   render () {
     const {
-      instruments,
-      score,
-      staves
+      score
     } = this.props
     const {
       name
@@ -46,10 +51,14 @@ class ScorePage extends Component {
         name='score'>
         <section className='section'>
           {name}
-          {instruments.map(instrument =>
-            <InstrumentItem key={instrument.id} instrument={instrument} />)}
-          {staves.map(staff =>
-            <StaffItem key={staff.id} staff={staff} />)}
+          <button onClick={()=>{
+            Tone.Transport.stop()
+            Tone.Transport.start()
+          }}>
+            Click
+          </button>
+          <InstrumentsManager />
+          <StavesManager />
         </section>
       </Main>
     )
@@ -63,9 +72,7 @@ export default compose(
       const { scoreId } = ownProps.match.params
       const score = scoreSelector(state, scoreId)
       return {
-        instruments: instrumentsSelector(state, scoreId),
-        score,
-        staves: stavesSelector(state, scoreId),
+        score
       }
     }
   )

@@ -10,7 +10,7 @@ const StaffItem = ({
 }) => {
   return (
     <div className='box'>
-      {bars.map(bar => <BarItem key={bar.id} bar={bar} />)}
+      {bars.map(bar => <BarItem key={bar.id} staff={staff} bar={bar} />)}
     </div>
   )
 }

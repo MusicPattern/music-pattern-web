@@ -8,25 +8,25 @@ import scoreInstrumentSelector from '../../selectors/scoreInstrument'
 import soundsSelector from '../../selectors/sounds'
 
 class InstrumentItem extends Component {
-  handleAddInstrument () {
+  handlePlayerInstrument () {
     const {
-      score,
       scoreInstrument,
       instrument,
+      player,
       sounds
     } = this.props
-    const { player } = (score || {})
     if (!player) {
       return
     }
-    player.addInstrument(scoreInstrument.id, { sounds, ...instrument })
-    player.check()
-    console.log('player IS READYE', player)
+
+    console.log('SOUNDS', sounds)
+
+    this.instrument = player.instrument(scoreInstrument.id, { sounds, ...instrument })
   }
 
   componentDidMount () {
     if (this.props.sounds.length) {
-      this.handleAddInstrument()
+      this.handlePlayerInstrument()
     }
   }
 
@@ -35,7 +35,7 @@ class InstrumentItem extends Component {
       sounds
     } = this.props
     if (sounds.length && prevProps.sounds !== sounds) {
-      this.handleAddInstrument()
+      this.handlePlayerInstrument()
     }
   }
 
@@ -61,7 +61,9 @@ export default compose(
       const { instrument, match } = ownProps
       const { scoreId } = match.params
       const sounds = soundsSelector(state, instrument.id)
+      const player = state.music.player
       return {
+        player,
         score: scoreSelector(state, scoreId),
         scoreInstrument: scoreInstrumentSelector(state, scoreId, instrument.id),
         sounds

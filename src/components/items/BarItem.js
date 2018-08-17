@@ -6,6 +6,7 @@ import voicesSelector from '../../selectors/voices'
 
 const BarItem = ({
   bar,
+  staff,
   voices
 }) => {
   const {
@@ -14,7 +15,11 @@ const BarItem = ({
   return (
     <div className='box'>
       {name}
-      {voices.map(voice => <VoiceItem bar={bar} key={voice.id} voice={voice} />)}
+      {voices.map(voice => <VoiceItem
+        bar={bar}
+        key={voice.id}
+        staff={staff}
+        voice={voice} />)}
     </div>
   )
 }

@@ -5,29 +5,31 @@ import Instrument from './instrument'
 export default class Player {
 	constructor(player = {}) {
 		this.band = {}
-    this.isReady =  false
+		this.handleSetupSuccess = player.handleSetupSuccess
+    this.isSetup =  false
 	}
 
-	addInstrument(key, instrument) {
-		if (!this.band[key]) {
+	instrument(key, instrument) {
+		if (this.band[key]) {
+			return this.band[key]
+		}
+		if (instrument) {
 			const newInstrument = new Instrument(instrument)
+			newInstrument.player = this
+			newInstrument.setup()
 			this.band[key] = newInstrument
+			return newInstrument
 		}
 	}
 
-	check () {
-		for (let instrument of Object.values(this.band)) {
-			instrument.check()
-			if (!instrument.isReady) {
-				return
-			}
-			instrument.setup()
+	handleInstrumentSetupSuccess () {
+		if (Object.values(this.band).every(instrument => instrument.isSetup)) {
+			this.isSetup = true
+			this.handleSetupSuccess && this.handleSetupSuccess()
 		}
-		this.isReady = true
 	}
 
 	start () {
 		Tone.Transport.start()
 	}
-
 }

@@ -1,9 +1,12 @@
-import createCachedSelector from "re-reselect"
+import { createSelector } from "reselect"
 
-export default createCachedSelector(
+import { AUDIOS_URL } from '../utils/config'
+
+export default createSelector(
   state => state.data.samples,
-  (state, sounds) => sounds,
-  (samples, sounds) =>
-    sounds.map(sound => sound.sampleId &&
-      samples.find(sample => sample.id === sound.sampleId))
-)((state, sounds) => sounds ? sounds.map(sound => sound.id).join('-') : ' ')
+  samples => samples.map(sample => {
+    return Object.assign({
+      url: `${AUDIOS_URL}/samples/${sample.id}`
+    }, sample)
+  })
+)
