@@ -31,28 +31,28 @@ export const scoreNormalizer = {
       staff: {
         key: "staves",
         normalizer: {
-          staffBars: {
-            key: "staffBars",
+          staffVoices: {
+            key: "staffVoices",
             normalizer: {
-              bar: {
-                key: "bars",
+              voice: {
+                key: "voices",
                 normalizer: {
-                  barVoices: {
-                    key: "barVoices",
+                  voicePatterns: {
+                    key: "voicePatterns",
                     normalizer: {
-                      voice: {
-                        key: "voices",
+                      pattern: {
+                        key: "patterns",
                         normalizer: {
                           melody: "melodies",
                           rhythm: "rhythms"
                         }
                       }
                     }
-                  }
+                  }  
                 }
               }
             }
-          },
+          }
         }
       }
     }

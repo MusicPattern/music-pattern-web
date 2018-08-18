@@ -1,8 +1,8 @@
 import createCachedSelector from "re-reselect"
 
 export default createCachedSelector(
-  state => state.data.staffBars,
+  state => state.data.staffVoices,
   (state, staffId) => staffId,
-  (staffBars, staffId) => staffBars.filter(staffStave =>
-    staffStave.staffId === staffId)
+  (staffVoices, staffId) => staffVoices.filter(staffVoice =>
+    staffVoice.staffId === staffId)
 )((state, staffId) => staffId || '')

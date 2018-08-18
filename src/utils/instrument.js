@@ -74,14 +74,14 @@ export default class Instrument {
 
     let durations, intervals
     if (!rhythm && melody) {
-      intervals = melody.pattern.split(',')
+      intervals = melody.intervals.split(',')
       durations = Array(intervals.length).fill(1)
     } else if (rhythm && !melody) {
-      durations = rhythm.pattern.split(',')
+      durations = rhythm.durations.split(',')
       intervals = Array(durations.length).fill(0)
     } else {
-      intervals = melody.pattern.split(',')
-      durations = rhythm.pattern.split(',')
+      intervals = melody.intervals.split(',')
+      durations = rhythm.durations.split(',')
     }
     intervals = intervals.map(interval => parseInt(interval))
     console.log(melody, 'intervals', intervals)

@@ -1,21 +1,23 @@
 import { createData } from 'pass-culture-shared'
 
 const data = createData({
-  bars: [],
-  barVoices: [],
   harmonies: [],
   instruments: [],
+  melodies: [],
   notes: [],
+  patterns: [],
+  rhythm: [],
   samples: [],
   scales: [],
   scoreInstruments: [],
   scores: [],
   scoreStaves: [],
   sounds: [],
-  staffBars: [],
+  staffVoices: [],
   staves: [],
   users: [],
-  voices: []
+  voices: [],
+  voicePatterns: []
 })
 
 export default data

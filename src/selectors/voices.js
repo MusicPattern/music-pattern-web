@@ -1,10 +1,10 @@
 import createCachedSelector from "re-reselect"
 
-import barSelector from './bar'
+import staffVoicesSelector from './staffVoices'
 
 export default createCachedSelector(
   state => state.data.voices,
-  barSelector,
-  (voices, bar) => voices.filter(voice =>
-    bar.barVoicesIds.includes(voice.id))
-)((state, barId) => barId || '')
+  staffVoicesSelector,
+  (voices, staffVoices) => voices.filter(voice =>
+    staffVoices.find(staffVoice => staffVoice.voiceId === voice.id))
+)((state, voiceId) => voiceId || '')
