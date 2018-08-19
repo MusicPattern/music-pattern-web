@@ -5,6 +5,7 @@ import rhythmSelector from './rhythm'
 import scoreStaffSelector from './scoreStaff'
 import staffSelector from './staff'
 import staffVoiceSelector from './staffVoice'
+import voiceSelector from './voice'
 import voicePatternSelector from './voicePattern'
 
 export default createCachedSelector(
@@ -13,12 +14,20 @@ export default createCachedSelector(
   (state, scoreId, staffId, voiceId, patternId) =>
     staffVoiceSelector(state, staffId, voiceId),
   (state, scoreId, staffId, voiceId, patternId) =>
+    voiceSelector(state, voiceId),
+  (state, scoreId, staffId, voiceId, patternId) =>
     voicePatternSelector(state, voiceId, patternId),
   (state, scoreId, staffId, voiceId, patternId) =>
-    rhythmSelector(state, patternId),
-  (state, scoreId, staffId, voiceId, patternId) =>
     melodySelector(state, patternId),
-  (scoreStaff, staff, staffVoice, voicePattern, rhythm, melody, key) => {
+  (state, scoreId, staffId, voiceId, patternId) =>
+    rhythmSelector(state, patternId),
+  (scoreStaff, staff, staffVoice, voice, voicePattern, melody, rhythm, key) => {
+
+    const {
+      rootPitch,
+      rootTime,
+    } = voicePattern
+
     let durations, intervals
     if (!rhythm && melody) {
       intervals = melody.intervals.split(',')
@@ -50,9 +59,12 @@ export default createCachedSelector(
     ]
 
     return {
+      description: voice.name,
       indexes,
       events,
-      key: indexes.join('/')
+      key: indexes.join('/'),
+      rootPitch,
+      rootTime, 
     }
   }
 )((state, scoreId, staffId, voiceId, patternId) =>

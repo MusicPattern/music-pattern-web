@@ -10,6 +10,9 @@ import scoreSelector from '../../selectors/score'
 
 class InstrumentsManager extends Component {
   onStartClick = () => {
+    Tone.Transport.stop()
+    Tone.Transport.cancel()
+    Tone.Player.dispatch("part")
     Tone.Transport.start()
   }
 

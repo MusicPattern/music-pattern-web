@@ -11,36 +11,22 @@ import partSelector from '../../selectors/part'
 
 class PatternItem extends Component {
 
-  handleInstrumentPart = () => {
-    const {
-      part,
-      scoreInstrument
-    } = this.props
-    const {
-      id
-    } = (scoreInstrument || {})
-    const instrument = Tone.Player.instrument(id)
-    if (!instrument) {
-      return
-    }
-    instrument.part(part.key, part)
-  }
-
   componentDidMount () {
-    this.handleInstrumentPart()
-  }
-
-  componentDidUpdate (prevProps) {
     const {
       part,
-      scoreInstrument
+      pattern,
+      scoreInstrument,
+      staff,
+      voice,
     } = this.props
-    if (
-      prevProps.part !== part ||
-      prevProps.scoreInstrument !== scoreInstrument
-    ) {
-      this.handleInstrumentPart()
-    }
+    Tone.Player.connect(
+      `${get(staff, 'id')}${get(voice, 'id')}${pattern.id}`,
+      action => {
+        if (action === "part") {
+          Tone.Player.instrument(scoreInstrument.id).part(part.key, part)
+        }
+      }
+    )
   }
 
   render () {

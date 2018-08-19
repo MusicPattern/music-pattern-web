@@ -17,15 +17,15 @@ export default class Instrument {
   constructor (instrument = {}) {
     Object.assign(this, instrument)
     this.isSetup = false
+    this.audio = {}
     this.partition = {}
-    this.control = {}
   }
 
   async setup () {
     await Promise.all((this.sounds || []).map(async sound => {
       const { pitch, sample } = sound
 
-      let source
+      let decodedAudioData
       if (sample) {
         const response = await fetch(sample.url)
         const decode = () => new Promise(resolve => {
@@ -33,14 +33,13 @@ export default class Instrument {
             context.decodeAudioData(arrayBuffer, resolve)
           })
         })
-        const decodedAudioData = await decode()
-
-        source = context.createBufferSource()
-        source.buffer = decodedAudioData
-        source.connect(context.destination)
+        decodedAudioData = await decode()
+      } else {
+        console.log(`You need to define a proper audio data for this sound ${this.name}`)
       }
 
-      this.control[pitch] = source
+      console.log('pitch', pitch)
+      this.audio[pitch] = decodedAudioData
     }))
 
     this.isSetup = true
@@ -48,25 +47,40 @@ export default class Instrument {
     Tone.Player.handleInstrumentSetupSuccess()
   }
 
-  trigger (time, event) {
-    console.log('time', time, 'event', event, this.sourcesByPitchId)
+  trigger (time, event, part) {
+    console.log(this.name, 'time', time, 'event', event, part.name)
     const {
-      pitch
+      pitch,
+      source
     } = event
-    this.control[pitch].start()
+
+    if (source) {
+      source.start()
+    } else {
+      console.log(`source not found for pitch ${this.name} ${pitch}`)
+    }
   }
 
   part (key, part) {
+
+    if (!this.isSetup) {
+      console.log(`instrument ${this.name} is not setup to do a part`)
+      return
+    }
 
     if (this.partition[key]) {
       return this.partition[key]
     }
 
     const {
+      description,
       indexes
     } = part
+    let {
+      rootPitch,
+      rootTime
+    } = part
 
-    let rootPitch, rootTime
     if (indexes[0] === 0) {
       if (indexes[1] === 0) {
         rootPitch = 12 * 4
@@ -78,7 +92,7 @@ export default class Instrument {
           rootPitch = previousEvent.value.pitch
           rootTime = previousEvent.time
         } else {
-          console.warn(`previousPart not found for 0/${indexes[1] - 1}`)
+          console.log(`previousPart not found for ${this.name} 0/${indexes[1] - 1}`)
         }
       }
     } else {
@@ -93,7 +107,7 @@ export default class Instrument {
         rootPitch = previousEvent.value.pitch
         rootTime = previousEvent.time
       } else {
-        console.warn(`previousPart not found for ${indexes[0] - 1}/${previousPatternIndex}`)
+        console.log(`previousPart not found for ${this.name} ${indexes[0] - 1}/${previousPatternIndex}`)
       }
     }
 
@@ -104,6 +118,7 @@ export default class Instrument {
         duration,
         interval,
         pitch,
+        source,
         time
       } = event
       if (!pitch) {
@@ -114,13 +129,23 @@ export default class Instrument {
       if (!time) {
         event.time = index === 0
           ? 0
-          //: Tone.Time(`${events[index - 1].time} + ${1/duration}n`)
           : events[index - 1].time + 1/duration
+      }
+      if (!source) {
+        const source = context.createBufferSource()
+        const decodedAudioData = this.audio[event.pitch]
+        if (decodedAudioData) {
+          source.buffer = decodedAudioData
+          source.connect(context.destination)
+          event.source = source
+        } else {
+          console.log(`decodedAudioData not found for event in ${this.name} ${description}`)
+        }
       }
     })
 
     const tonePart = new Tone.Part(
-      (time, event) => this.trigger(time, event),
+      (time, event) => this.trigger(time, event, part),
       events
     )
     Object.assign(tonePart, part)
@@ -131,5 +156,10 @@ export default class Instrument {
     tonePart.start(rootTime)
 
     this.partition[key] = tonePart
+  }
+
+  cancel () {
+    delete this.partition
+    this.partition = {}
   }
 }

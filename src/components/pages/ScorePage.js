@@ -12,14 +12,6 @@ import StavesManager from '../managers/StavesManager'
 import { scoreNormalizer } from '../../utils/normalizers'
 import scoreSelector from '../../selectors/score'
 
-import Tone from 'tone'
-/*
-var synth = new Tone.Synth().toMaster()
-const part = new Tone.Part(function(time, pitch){
-  synth.triggerAttackRelease(pitch, "2n", time);
-}, [["0", 1], ["1", 2], ["2", "G#3"], ["3", "C3"]]);
-part.start(0);
-*/
 
 class ScorePage extends Component {
   handleDataRequest = (handleSuccess, handleFail) => {
@@ -51,12 +43,6 @@ class ScorePage extends Component {
         name='score'>
         <section className='section'>
           {name}
-          <button onClick={()=>{
-            Tone.Transport.stop()
-            Tone.Transport.start()
-          }}>
-            Click
-          </button>
           <InstrumentsManager />
           <StavesManager />
         </section>

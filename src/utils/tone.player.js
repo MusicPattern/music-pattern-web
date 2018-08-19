@@ -5,15 +5,16 @@ import Instrument from './instrument'
 export default class Player {
 	constructor() {
 		this.band = {}
-		this.view = {}
+		this.subscribers = {}
     this.isSetup =  false
 	}
 
-	connect ($element, callback) {
-		this.view[$element.key] = {
-			callback,
-			$element
-		}
+	connect (key, callback) {
+		this.subscribers[key] = callback
+	}
+
+	dispatch (action) {
+		Object.values(this.subscribers).forEach(callback => callback(action))
 	}
 
 	instrument(key, instrument) {
@@ -31,9 +32,20 @@ export default class Player {
 	handleInstrumentSetupSuccess () {
 		if (Object.values(this.band).every(instrument => instrument.isSetup)) {
 			this.isSetup = true
-			Object.values(this.view).forEach(({ callback }) => callback("setup"))
+			this.dispatch("setup")
 		}
 	}
+
+	start () {
+		Tone.Transport.stop()
+    Tone.Transport.cancel()
+		Object.values(this.band).forEach(instrument => {
+			instrument.cancel()
+		})
+    Tone.Player.dispatch("part")
+    Tone.Transport.start()
+	}
+
 }
 
 Tone.Player = new Player()
