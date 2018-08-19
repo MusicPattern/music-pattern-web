@@ -20,7 +20,7 @@ class VoiceItem extends Component {
     } = (voice || {})
     return (
       <div className='box'>
-        {name}
+        Voice: {name}
         {patterns.map(pattern =>
           <PatternItem key={pattern.id}
             pattern={pattern}
@@ -36,10 +36,10 @@ export default compose(
   connect(
     (state, ownProps) => {
 
-      const { staff } = ownProps
-      const staffId = get(staff, 'id')
+      const { voice } = ownProps
+      const voiceId = get(voice, 'id')
 
-      const patterns = patternsSelector(state, staffId)
+      const patterns = patternsSelector(state, voiceId)
 
       return {
         patterns

@@ -52,54 +52,21 @@ export default class Instrument {
 	   triggeredSource && triggeredSource.start(time)
   }
 
-  part (time, rhythm, melody) {
-    if (this.partition[time]) {
-      // TODO DELETE
+  part (key, part) {
+    if (this.partition[key]) {
+      return this.partition[key]
     }
 
-    const part = new Tone.Part(
+    const tonePart = new Tone.Part(
       (time, pitch) => {
         console.log('time', time, 'pitch', pitch)
         this.trigger(time, pitch)
       },
-      this.zip(rhythm, melody)
+      part.events.map(event => [event.duration, pitchIndexToTone(event.pitch)])
     )
 
-    part.start(time)
+    tonePart.start(part.time)
 
-    this.partition[time] = part
-  }
-
-  zip (rhythm, melody) {
-
-    let durations, intervals
-    if (!rhythm && melody) {
-      intervals = melody.intervals.split(',')
-      durations = Array(intervals.length).fill(1)
-    } else if (rhythm && !melody) {
-      durations = rhythm.durations.split(',')
-      intervals = Array(durations.length).fill(0)
-    } else {
-      intervals = melody.intervals.split(',')
-      durations = rhythm.durations.split(',')
-    }
-    intervals = intervals.map(interval => parseInt(interval))
-    console.log(melody, 'intervals', intervals)
-
-    const pitches = Array(durations.length).fill(0)
-    intervals.forEach((interval, index) =>
-      pitches[index] = index === 0
-        ? 0
-        : pitches[index - 1] + interval
-    )
-    const tones = pitches.map(pitchIndexToTone)
-
-    // console.log('durations', durations)
-    console.log('tones', tones)
-
-    const zip = durations.map((duration, index) =>
-                  [duration, tones[index]])
-    console.log('zip', zip, this.id, melody.name)
-    return zip
+    this.partition[key] = tonePart
   }
 }

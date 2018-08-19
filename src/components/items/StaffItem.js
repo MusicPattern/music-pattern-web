@@ -8,8 +8,12 @@ const StaffItem = ({
   voices,
   staff
 }) => {
+  const {
+    name
+  } = staff
   return (
     <div className='box'>
+      Staff: {name}
       {voices.map(voice => <VoiceItem
         key={voice.id}
         staff={staff}

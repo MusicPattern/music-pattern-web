@@ -4,15 +4,20 @@ import voicePatternsSelector from './voicePatterns'
 
 export default createCachedSelector(
   voicePatternsSelector,
-  (state, staffId, voiceId, positionIndex) => voiceId,
-  (state, staffId, voiceId, positionIndex) => positionIndex,
-  (voicePatterns, voiceId, positionIndex) => {
-    if (voiceId) {
-      return voicePatterns.find(voicePattern =>
-      voicePattern.voiceId === voiceId)
+  (state, voiceId, patternId, positionIndex) => voiceId,
+  (state, voiceId, patternId, positionIndex) => patternId,
+  (state, voiceId, patternId, positionIndex) => positionIndex,
+  (voicePatterns, voiceId, patternId, positionIndex) => {
+    let filteredVoicePatterns = voicePatterns
+    if (patternId) {
+      filteredVoicePatterns = filteredVoicePatterns.find(voicePattern =>
+        voicePattern.patternId === patternId)
     }
-    return voicePatterns.find(voicePattern =>
-      voicePattern.positionIndex === positionIndex)
+    if (positionIndex) {
+      filteredVoicePatterns = filteredVoicePatterns.find(voicePattern =>
+        voicePattern.positionIndex === positionIndex)
+    }
+    return filteredVoicePatterns
   }
-)((state, staffId, voiceId, positionIndex) =>
-  `${staffId || ' '}/${voiceId || ' '}/${positionIndex || ' '}`)
+)((state, voiceId, patternId, positionIndex) =>
+  `${patternId || ''}/${voiceId || ' '}/${positionIndex || ' '}`)

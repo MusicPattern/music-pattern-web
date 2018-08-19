@@ -18,9 +18,6 @@ class InstrumentItem extends Component {
     if (!player) {
       return
     }
-
-    console.log('SOUNDS', sounds)
-
     this.instrument = player.instrument(scoreInstrument.id, { sounds, ...instrument })
   }
 
