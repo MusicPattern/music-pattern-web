@@ -10,7 +10,7 @@ import {
 import { combineReducers } from 'redux'
 
 import data from './data'
-import music from './music'
+import tone from './tone'
 
 const rootReducer = combineReducers({
   blockers,
@@ -19,8 +19,8 @@ const rootReducer = combineReducers({
   form,
   loading,
   modal,
-  music,
   notification,
+  tone,
   user
 })
 

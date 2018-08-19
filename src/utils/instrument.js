@@ -2,26 +2,28 @@ import Tone from 'tone'
 
 import { context } from './audio'
 
+/*
 const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 function pitchIndexToTone (index) {
   const levelIndex = Math.floor(index / 12)
   const noteIndex = index % 12
   return `${notes[noteIndex]}${levelIndex}`
 }
+*/
 
+window.Tone = Tone
 
 export default class Instrument {
   constructor (instrument = {}) {
     Object.assign(this, instrument)
     this.isSetup = false
     this.partition = {}
+    this.control = {}
   }
 
   async setup () {
-    this.sourcesByPitchId = {}
-
     await Promise.all((this.sounds || []).map(async sound => {
-      const { pitchId, sample } = sound
+      const { pitch, sample } = sound
 
       let source
       if (sample) {
@@ -38,30 +40,24 @@ export default class Instrument {
         source.connect(context.destination)
       }
 
-      this.sourcesByPitchId[pitchId] = source
+      this.control[pitch] = source
     }))
 
     this.isSetup = true
-
     this.handleSetupSuccess && this.handleSetupSuccess()
-    this.player.handleInstrumentSetupSuccess()
+    Tone.Player.handleInstrumentSetupSuccess()
   }
 
   trigger (time, event) {
-    console.log('time', time, 'event', event)
-    /*
+    console.log('time', time, 'event', event, this.sourcesByPitchId)
     const {
-      duration,
-      interval,
-      key
+      pitch
     } = event
-    */
-    //const triggeredSource = this.sourcesByPitchId[pitchId]
-	  //triggeredSource && triggeredSource.start(time)
+    this.control[pitch].start()
   }
 
   part (key, part) {
-    console.log(this.name, 'key', key)
+
     if (this.partition[key]) {
       return this.partition[key]
     }
@@ -70,25 +66,35 @@ export default class Instrument {
       indexes
     } = part
 
-    console.log('indexes', indexes)
     let rootPitch, rootTime
     if (indexes[0] === 0) {
       if (indexes[1] === 0) {
         rootPitch = 12 * 4
         rootTime = 0
       } else {
-        console.log('this.partition', this.partition)
         const previousPart = this.partition[`0/${indexes[1] - 1}`]
-        console.log('previousPart', previousPart)
+        if (previousPart) {
+          const previousEvent = previousPart._events.slice(-1)[0]
+          rootPitch = previousEvent.value.pitch
+          rootTime = previousEvent.time
+        } else {
+          console.warn(`previousPart not found for 0/${indexes[1] - 1}`)
+        }
       }
     } else {
       const previousPatternIndex = Math.max(
-        Object.values(this.partition)
+        ...Object.values(this.partition)
           .filter(part => part.indexes[0] === indexes[0] - 1)
           .map(part => part.indexes[1])
       )
       const previousPart = this.partition[`${indexes[0] - 1}/${previousPatternIndex}`]
-      console.log('previousPart', previousPart)
+      if (previousPart) {
+        const previousEvent = previousPart._events.slice(-1)[0]
+        rootPitch = previousEvent.value.pitch
+        rootTime = previousEvent.time
+      } else {
+        console.warn(`previousPart not found for ${indexes[0] - 1}/${previousPatternIndex}`)
+      }
     }
 
     const events = part.events.map(event => ({ ...event }))
@@ -107,8 +113,9 @@ export default class Instrument {
       }
       if (!time) {
         event.time = index === 0
-          ? rootTime
-          : events[index - 1].time + duration
+          ? 0
+          //: Tone.Time(`${events[index - 1].time} + ${1/duration}n`)
+          : events[index - 1].time + 1/duration
       }
     })
 
@@ -120,6 +127,8 @@ export default class Instrument {
 
     tonePart._events.forEach((_event, index) =>
       Object.assign(_event, events[index]))
+
+    tonePart.start(rootTime)
 
     this.partition[key] = tonePart
   }

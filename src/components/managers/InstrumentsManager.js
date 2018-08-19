@@ -2,38 +2,30 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
+import Tone from 'tone'
 
 import InstrumentItem from '../items/InstrumentItem'
-import { assignMusic } from '../../reducers/music'
 import instrumentsSelector from '../../selectors/instruments'
 import scoreSelector from '../../selectors/score'
-import Player from '../../utils/player'
 
 class InstrumentsManager extends Component {
   onStartClick = () => {
-    this.props.player.start()
+    Tone.Transport.start()
   }
 
   componentDidMount () {
-    const { dispatch } = this.props
-    const player = new Player({
-      handleSetupSuccess: () => {
-        dispatch(assignMusic({ isPlayerSetup: true }))
-      }
-    })
-    dispatch(assignMusic({ player }))
+    Tone.Player.connect("manager", () => this.forceUpdate())
   }
 
   render () {
 
     const {
-      instruments,
-      isPlayerSetup
+      instruments
     } = this.props
 
     return (
       <div>
-        {isPlayerSetup && (
+        {Tone.Player.isSetup && (
           <button className='button is-primary' onClick={this.onStartClick}>
             PLAY
           </button>
@@ -55,10 +47,8 @@ export default compose(
     (state, ownProps) => {
       const { scoreId } = ownProps.match.params
       const score = scoreSelector(state, scoreId)
-      const { isSetup } = (state.player || {})
       return {
         instruments: instrumentsSelector(state, scoreId),
-        isPlayerSetup: isSetup,
         score
       }
     }

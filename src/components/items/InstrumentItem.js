@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
+import Tone from 'tone'
 
 import scoreSelector from '../../selectors/score'
 import scoreInstrumentSelector from '../../selectors/scoreInstrument'
@@ -12,13 +13,12 @@ class InstrumentItem extends Component {
     const {
       scoreInstrument,
       instrument,
-      player,
       sounds
     } = this.props
-    if (!player) {
-      return
-    }
-    this.instrument = player.instrument(scoreInstrument.id, { sounds, ...instrument })
+    this.instrument = Tone.Player.instrument(
+      scoreInstrument.id,
+      { sounds, ...instrument }
+    )
   }
 
   componentDidMount () {
@@ -60,9 +60,7 @@ export default compose(
       const { instrument, match } = ownProps
       const { scoreId } = match.params
       const sounds = soundsSelector(state, instrument.id)
-      const player = state.music.player
       return {
-        player,
         score: scoreSelector(state, scoreId),
         scoreInstrument: scoreInstrumentSelector(state, scoreId, instrument.id),
         sounds

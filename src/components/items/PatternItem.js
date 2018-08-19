@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
+import Tone from 'tone'
 
 import scoreInstrumentSelector from '../../selectors/scoreInstrument'
 import staffVoiceSelector from '../../selectors/staffVoice'
@@ -12,9 +13,13 @@ class PatternItem extends Component {
 
   handleInstrumentPart = () => {
     const {
-      instrument,
-      part
+      part,
+      scoreInstrument
     } = this.props
+    const {
+      id
+    } = (scoreInstrument || {})
+    const instrument = Tone.Player.instrument(id)
     if (!instrument) {
       return
     }
@@ -27,12 +32,12 @@ class PatternItem extends Component {
 
   componentDidUpdate (prevProps) {
     const {
-      instrument,
-      part
+      part,
+      scoreInstrument
     } = this.props
     if (
-      prevProps.instrument !== instrument ||
-      prevProps.part !== part
+      prevProps.part !== part ||
+      prevProps.scoreInstrument !== scoreInstrument
     ) {
       this.handleInstrumentPart()
     }
@@ -66,19 +71,12 @@ export default compose(
       const voiceId = get(voice, 'id')
       const { id } = pattern
 
-      let instrument
       const { positionIndex } = (staffVoiceSelector(state, staffId, voiceId) || {})
-      const scoreInstrument = scoreInstrumentSelector(state, scoreId, null, positionIndex)
-      const player = state.music.player
-      if (scoreInstrument && player) {
-        instrument = player.instrument(scoreInstrument.id)
-      }
-
       const part = partSelector(state, scoreId, staffId, voiceId, id)
 
       return {
-        instrument,
-        part
+        part,
+        scoreInstrument: scoreInstrumentSelector(state, scoreId, null, positionIndex)
       }
     }
   )

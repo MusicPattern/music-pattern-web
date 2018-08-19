@@ -17,7 +17,7 @@ export const scoreNormalizer = {
           sounds: {
             key: "sounds",
             normalizer: {
-              pitch: "pitches",
+              //pitch: "pitches",
               sample: "samples"
             }
           }
@@ -48,7 +48,7 @@ export const scoreNormalizer = {
                         }
                       }
                     }
-                  }  
+                  }
                 }
               }
             }

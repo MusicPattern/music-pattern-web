@@ -30,13 +30,18 @@ export default createCachedSelector(
       intervals = melody.intervals.split(',')
       durations = rhythm.durations.split(',')
     }
-    durations = durations.map(duration => parseInt(duration, 10))
+    durations = durations.map(duration =>
+      parseFloat(
+          duration.split('/')
+                  .map(fraction => parseInt(fraction, 10))
+                  .reduce((a,b) => a/b)
+      )
+    )
     intervals = intervals.map(interval => parseInt(interval, 10))
 
     const events = durations.map((duration, index) => ({
       duration,
-      interval: intervals[index],
-      probability: 0.5
+      interval: intervals[index]
     }))
 
     const indexes = [

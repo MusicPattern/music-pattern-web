@@ -3,10 +3,17 @@ import Tone from 'tone'
 import Instrument from './instrument'
 
 export default class Player {
-	constructor(player = {}) {
+	constructor() {
 		this.band = {}
-		this.handleSetupSuccess = player.handleSetupSuccess
+		this.view = {}
     this.isSetup =  false
+	}
+
+	connect ($element, callback) {
+		this.view[$element.key] = {
+			callback,
+			$element
+		}
 	}
 
 	instrument(key, instrument) {
@@ -15,7 +22,6 @@ export default class Player {
 		}
 		if (instrument) {
 			const newInstrument = new Instrument(instrument)
-			newInstrument.player = this
 			newInstrument.setup()
 			this.band[key] = newInstrument
 			return newInstrument
@@ -25,11 +31,9 @@ export default class Player {
 	handleInstrumentSetupSuccess () {
 		if (Object.values(this.band).every(instrument => instrument.isSetup)) {
 			this.isSetup = true
-			this.handleSetupSuccess && this.handleSetupSuccess()
+			Object.values(this.view).forEach(({ callback }) => callback("setup"))
 		}
 	}
-
-	start () {
-		Tone.Transport.start()
-	}
 }
+
+Tone.Player = new Player()
