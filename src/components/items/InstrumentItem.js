@@ -22,16 +22,18 @@ class InstrumentItem extends Component {
   }
 
   componentDidMount () {
-    if (this.props.sounds.length) {
-      this.handlePlayerInstrument()
-    }
+    this.handlePlayerInstrument()
   }
 
   componentDidUpdate (prevProps) {
     const {
+      instrument,
       sounds
     } = this.props
-    if (sounds.length && prevProps.sounds !== sounds) {
+    if (
+      prevProps.instrument !== instrument ||
+      prevProps.sounds !== sounds
+    ) {
       this.handlePlayerInstrument()
     }
   }

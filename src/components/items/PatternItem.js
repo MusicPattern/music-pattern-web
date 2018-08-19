@@ -27,9 +27,13 @@ class PatternItem extends Component {
 
   componentDidUpdate (prevProps) {
     const {
-      instrument
+      instrument,
+      part
     } = this.props
-    if (prevProps.instrument !== instrument) {
+    if (
+      prevProps.instrument !== instrument ||
+      prevProps.part !== part
+    ) {
       this.handleInstrumentPart()
     }
   }

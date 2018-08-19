@@ -20,7 +20,7 @@ export default class Instrument {
   async setup () {
     this.sourcesByPitchId = {}
 
-    await Promise.all(this.sounds.map(async sound => {
+    await Promise.all((this.sounds || []).map(async sound => {
       const { pitchId, sample } = sound
 
       let source
@@ -47,25 +47,79 @@ export default class Instrument {
     this.player.handleInstrumentSetupSuccess()
   }
 
-  trigger (time, pitchId) {
-     const triggeredSource = this.sourcesByPitchId[pitchId]
-	   triggeredSource && triggeredSource.start(time)
+  trigger (time, event) {
+    console.log('time', time, 'event', event)
+    /*
+    const {
+      duration,
+      interval,
+      key
+    } = event
+    */
+    //const triggeredSource = this.sourcesByPitchId[pitchId]
+	  //triggeredSource && triggeredSource.start(time)
   }
 
   part (key, part) {
+    console.log(this.name, 'key', key)
     if (this.partition[key]) {
       return this.partition[key]
     }
 
-    const tonePart = new Tone.Part(
-      (time, pitch) => {
-        console.log('time', time, 'pitch', pitch)
-        this.trigger(time, pitch)
-      },
-      part.events.map(event => [event.duration, pitchIndexToTone(event.pitch)])
-    )
+    const {
+      indexes
+    } = part
 
-    tonePart.start(part.time)
+    console.log('indexes', indexes)
+    let rootPitch, rootTime
+    if (indexes[0] === 0) {
+      if (indexes[1] === 0) {
+        rootPitch = 12 * 4
+        rootTime = 0
+      } else {
+        console.log('this.partition', this.partition)
+        const previousPart = this.partition[`0/${indexes[1] - 1}`]
+        console.log('previousPart', previousPart)
+      }
+    } else {
+      const previousPatternIndex = Math.max(
+        Object.values(this.partition)
+          .filter(part => part.indexes[0] === indexes[0] - 1)
+          .map(part => part.indexes[1])
+      )
+      const previousPart = this.partition[`${indexes[0] - 1}/${previousPatternIndex}`]
+      console.log('previousPart', previousPart)
+    }
+
+    const events = part.events.map(event => ({ ...event }))
+
+    events.forEach((event, index) => {
+      const {
+        duration,
+        interval,
+        pitch,
+        time
+      } = event
+      if (!pitch) {
+        event.pitch = index === 0
+          ? rootPitch
+          : events[index - 1].pitch + interval
+      }
+      if (!time) {
+        event.time = index === 0
+          ? rootTime
+          : events[index - 1].time + duration
+      }
+    })
+
+    const tonePart = new Tone.Part(
+      (time, event) => this.trigger(time, event),
+      events
+    )
+    Object.assign(tonePart, part)
+
+    tonePart._events.forEach((_event, index) =>
+      Object.assign(_event, events[index]))
 
     this.partition[key] = tonePart
   }
