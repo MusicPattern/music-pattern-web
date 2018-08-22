@@ -1,5 +1,4 @@
 import {
-  blockers,
   errors,
   form,
   loading,
@@ -13,7 +12,6 @@ import data from './data'
 import tone from './tone'
 
 const rootReducer = combineReducers({
-  blockers,
   data,
   errors,
   form,

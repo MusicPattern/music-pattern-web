@@ -23,6 +23,11 @@ class PatternItem extends Component {
       `${get(staff, 'id')}${get(voice, 'id')}${pattern.id}`,
       action => {
         if (action === "part") {
+          const instrument = Tone.Player.instrument(scoreInstrument.id)
+          if (!instrument) {
+            console.warn(`instrument not found for scoreInstrument ${scoreInstrument.id}`)
+            return
+          }
           Tone.Player.instrument(scoreInstrument.id).part(part.key, part)
         }
       }

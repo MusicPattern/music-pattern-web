@@ -6,7 +6,9 @@ export default class Player {
 	constructor() {
 		this.band = {}
 		this.subscribers = {}
-    this.isSetup =  false
+		this.isPart = false
+    this.isSetup = false
+		this.isSource = false
 	}
 
 	connect (key, callback) {
@@ -36,14 +38,57 @@ export default class Player {
 		}
 	}
 
-	start () {
-		Tone.Transport.stop()
-    Tone.Transport.cancel()
+	loop () {
+		Tone.Transport.loop = !Tone.Transport.loop
+		this.dispatch("loop")
+	}
+
+	part () {
+		Tone.Transport.cancel()
 		Object.values(this.band).forEach(instrument => {
 			instrument.cancel()
 		})
-    Tone.Player.dispatch("part")
+		this.isPart = true
+		this.dispatch("part")
+	}
+
+	source () {
+		Object.values(this.band).forEach(instrument => {
+			instrument.source()
+		})
+		this.isSource = true
+	}
+
+	start () {
+
+		if (!this.isSetup) {
+			console.Log('Tone Player not setup')
+			return
+		}
+
+		Tone.Transport.stop()
+
+		if (!this.isPart) {
+			this.part()
+		}
+
+		if (!this.isSource) {
+			this.source()
+		}
+
     Tone.Transport.start()
+
+		this.isPlaying = true
+
+		this.dispatch("start")
+	}
+
+	stop () {
+		Tone.Transport.stop()
+
+		this.isPlaying = false
+
+		this.dispatch("stop")
 	}
 
 }

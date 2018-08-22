@@ -7,6 +7,26 @@ export const harmonyNormalizer = {
   }
 }
 
+export const staffVoiceNormalizer = {
+  voice: {
+    key: "voices",
+    normalizer: {
+      voicePatterns: {
+        key: "voicePatterns",
+        normalizer: {
+          pattern: {
+            key: "patterns",
+            normalizer: {
+              melody: "melodies",
+              rhythm: "rhythms"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 export const scoreNormalizer = {
   scoreInstruments: {
     key: "scoreInstruments",
@@ -33,25 +53,7 @@ export const scoreNormalizer = {
         normalizer: {
           staffVoices: {
             key: "staffVoices",
-            normalizer: {
-              voice: {
-                key: "voices",
-                normalizer: {
-                  voicePatterns: {
-                    key: "voicePatterns",
-                    normalizer: {
-                      pattern: {
-                        key: "patterns",
-                        normalizer: {
-                          melody: "melodies",
-                          rhythm: "rhythms"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            normalizer: staffVoiceNormalizer
           }
         }
       }

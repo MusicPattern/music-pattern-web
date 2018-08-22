@@ -8,11 +8,11 @@ import {
   resetForm,
   showNotification,
   Spinner,
+  withBlock,
   withLogin
 } from 'pass-culture-shared'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import { compose } from 'redux'
 
@@ -61,46 +61,13 @@ class Main extends Component {
     })
   }
 
-  handleHistoryBlock = () => {
-    const {
-      blockers,
-      history
-    } = this.props
-    this.unblock && this.unblock()
-    this.unblock = history.block(
-      () => {
-
-        // test all the blockers
-        for (let blocker of blockers) {
-          const {
-            block
-          } = (blocker || {})
-          const shouldBlock = block && block(this.props)
-          if (shouldBlock) {
-            return false
-          }
-        }
-
-        // return true by default, which means that we don't block
-        // the change of pathname
-        return true
-      }
-    )
-  }
-
   componentDidMount () {
-    this.handleHistoryBlock()
     this.props.user && this.handleDataRequest()
   }
 
   componentDidUpdate (prevProps) {
-    const blockersChanged = prevProps.blockers !== this.props.blockers
     const userChanged = !prevProps.user && this.props.user // User just loaded
     const searchChanged = this.props.location.search !== prevProps.location.search
-
-    if (blockersChanged) {
-      //this.handleHistoryBlock()
-    }
     if (userChanged || searchChanged) {
       this.handleDataRequest()
     }
@@ -183,8 +150,8 @@ class Main extends Component {
 }
 
 export default compose(
-  withRouter,
   withLogin({ failRedirect: '/signin' }),
+  withBlock,
   connect(
     state => ({
       blockers: state.blockers,

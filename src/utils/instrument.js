@@ -38,7 +38,6 @@ export default class Instrument {
         console.log(`You need to define a proper audio data for this sound ${this.name}`)
       }
 
-      console.log('pitch', pitch)
       this.audio[pitch] = decodedAudioData
     }))
 
@@ -48,16 +47,24 @@ export default class Instrument {
   }
 
   trigger (time, event, part) {
-    console.log(this.name, 'time', time, 'event', event, part.name)
+    const {
+      description
+    } = (part || {})
     const {
       pitch,
       source
     } = event
-
     if (source) {
+
       source.start()
+
+      const nextSource = context.createBufferSource()
+      nextSource.buffer = this.audio[pitch]
+      nextSource.connect(context.destination)
+      event.source = nextSource
+
     } else {
-      console.log(`source not found for pitch ${this.name} ${pitch}`)
+      console.log(`source not found for pitch ${this.name} ${description} ${pitch}`)
     }
   }
 
@@ -73,7 +80,6 @@ export default class Instrument {
     }
 
     const {
-      description,
       indexes
     } = part
     let {
@@ -118,7 +124,6 @@ export default class Instrument {
         duration,
         interval,
         pitch,
-        source,
         time
       } = event
       if (!pitch) {
@@ -130,17 +135,6 @@ export default class Instrument {
         event.time = index === 0
           ? 0
           : events[index - 1].time + 1/duration
-      }
-      if (!source) {
-        const source = context.createBufferSource()
-        const decodedAudioData = this.audio[event.pitch]
-        if (decodedAudioData) {
-          source.buffer = decodedAudioData
-          source.connect(context.destination)
-          event.source = source
-        } else {
-          console.log(`decodedAudioData not found for event in ${this.name} ${description}`)
-        }
       }
     })
 
@@ -156,6 +150,25 @@ export default class Instrument {
     tonePart.start(rootTime)
 
     this.partition[key] = tonePart
+  }
+
+  source () {
+    Object.values(this.partition).forEach(part => {
+      const {
+        description
+      } = part
+      part._events.forEach(event => {
+        const source = context.createBufferSource()
+        const decodedAudioData = this.audio[event.pitch]
+        if (decodedAudioData) {
+          source.buffer = decodedAudioData
+          source.connect(context.destination)
+          event.value.source = source
+        } else {
+          console.log(`decodedAudioData not found for event in ${this.name} ${description}`)
+        }
+      })
+    })
   }
 
   cancel () {

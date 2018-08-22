@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 import Tone from 'tone'
 
+import instrumentSelector from '../../selectors/instrument'
 import scoreSelector from '../../selectors/score'
-import scoreInstrumentSelector from '../../selectors/scoreInstrument'
 import soundsSelector from '../../selectors/sounds'
 
 class InstrumentItem extends Component {
@@ -44,7 +44,7 @@ class InstrumentItem extends Component {
     } = this.props
     const {
       name
-    } = instrument
+    } = (instrument || {})
     return (
       <div>
         {name}
@@ -57,12 +57,13 @@ export default compose(
   withRouter,
   connect(
     (state, ownProps) => {
-      const { instrument, match } = ownProps
+      const { match, scoreInstrument } = ownProps
+      const instrument = instrumentSelector(state, scoreInstrument.instrumentId)
       const { scoreId } = match.params
-      const sounds = soundsSelector(state, instrument.id)
+      const sounds = soundsSelector(state, scoreInstrument.instrumentId)
       return {
+        instrument,
         score: scoreSelector(state, scoreId),
-        scoreInstrument: scoreInstrumentSelector(state, scoreId, instrument.id),
         sounds
       }
     }
