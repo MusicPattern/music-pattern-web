@@ -89,8 +89,12 @@ export default class Instrument {
 
     if (indexes[0] === 0) {
       if (indexes[1] === 0) {
-        rootPitch = 12 * 4
-        rootTime = 0
+        rootPitch = typeof rootPitch !== "undefined"
+          ? rootPitch
+          : 12 * 4
+        rootTime = typeof rootTime !== "undefined"
+          ? rootTime
+          : 0
       } else {
         const previousPart = this.partition[`0/${indexes[1] - 1}`]
         if (previousPart) {
@@ -126,12 +130,12 @@ export default class Instrument {
         pitch,
         time
       } = event
-      if (!pitch) {
+      if (typeof pitch === "undefined") {
         event.pitch = index === 0
           ? rootPitch
           : events[index - 1].pitch + interval
       }
-      if (!time) {
+      if (typeof time === "undefined") {
         event.time = index === 0
           ? 0
           : events[index - 1].time + 1/duration

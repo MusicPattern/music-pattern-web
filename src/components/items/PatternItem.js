@@ -8,20 +8,24 @@ import Tone from 'tone'
 import scoreInstrumentSelector from '../../selectors/scoreInstrument'
 import staffVoiceSelector from '../../selectors/staffVoice'
 import partSelector from '../../selectors/part'
+import voicePatternSelector from '../../selectors/voicePattern'
 
 class PatternItem extends Component {
 
   componentDidMount () {
     const {
-      part,
       pattern,
-      scoreInstrument,
       staff,
-      voice,
+      voice
     } = this.props
+
     Tone.Player.connect(
       `${get(staff, 'id')}${get(voice, 'id')}${pattern.id}`,
       action => {
+        const {
+          part,
+          scoreInstrument
+        } = this.props
         if (action === "part") {
           const instrument = Tone.Player.instrument(scoreInstrument.id)
           if (!instrument) {
@@ -36,15 +40,19 @@ class PatternItem extends Component {
 
   render () {
     const {
-      pattern
+      pattern,
+      voicePattern
     } = this.props
     const {
       name
     } = (pattern || {})
-
+    const {
+      rootPitch,
+      rootTime
+    } = (voicePattern || {})
     return (
       <div className='box'>
-        Pattern: {name}
+        Pattern: {name} {rootPitch} {rootTime}
       </div>
     )
   }
@@ -67,7 +75,8 @@ export default compose(
 
       return {
         part,
-        scoreInstrument: scoreInstrumentSelector(state, scoreId, null, positionIndex)
+        scoreInstrument: scoreInstrumentSelector(state, scoreId, null, positionIndex),
+        voicePattern: voicePatternSelector(state, voiceId, id)
       }
     }
   )
