@@ -28,7 +28,18 @@ export default class Instrument {
       return
     }
 
-    this.toneInstrument = new Tone[this.toneName]().toMaster()
+    const args = []
+    if (this.toneName === "Sampler") {
+      const toneNoteToSampleUrl = {}
+      this.sounds.forEach(sound => {
+        const { pitch, sample } = sound
+        const toneNote = pitchToToneNote(pitch)
+        toneNoteToSampleUrl[toneNote] = sample.url
+      })
+      args.push(toneNoteToSampleUrl)
+    }
+
+    this.toneInstrument = new Tone[this.toneName](...args).toMaster()
     this.toneInstrument.sync()
 
     this.isSetup = true
@@ -128,7 +139,7 @@ export default class Instrument {
       event.time = time
       event.toneDuration = toneDuration
 
-      this.toneInstrument.triggerAttackRelease(toneNote, "8n", time)
+      this.toneInstrument.triggerAttackRelease(toneNote, toneDuration, time)
 
     })
 
