@@ -4,7 +4,7 @@ import instrumentsSelector from './instruments'
 
 export default createCachedSelector(
   instrumentsSelector,
-  (state, instrumentId) => instrumentId,
+  (state, scoreId, instrumentId) => instrumentId,
   (instruments, instrumentId) => instruments.find(instrument =>
     instrument.id === instrumentId)
 )((state, instrumentId) => instrumentId || '')

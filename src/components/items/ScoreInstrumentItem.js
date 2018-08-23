@@ -8,14 +8,14 @@ import instrumentSelector from '../../selectors/instrument'
 import scoreSelector from '../../selectors/score'
 import soundsSelector from '../../selectors/sounds'
 
-class InstrumentItem extends Component {
+class ScoreInstrumentItem extends Component {
   handlePlayerInstrument () {
     const {
       scoreInstrument,
       instrument,
       sounds
     } = this.props
-    this.instrument = Tone.Player.instrument(
+    this.instrument = Tone.Pattern.instrument(
       scoreInstrument.id,
       { sounds, ...instrument }
     )
@@ -58,8 +58,8 @@ export default compose(
   connect(
     (state, ownProps) => {
       const { match, scoreInstrument } = ownProps
-      const instrument = instrumentSelector(state, scoreInstrument.instrumentId)
       const { scoreId } = match.params
+      const instrument = instrumentSelector(state, scoreId, scoreInstrument.instrumentId)
       const sounds = soundsSelector(state, scoreInstrument.instrumentId)
       return {
         instrument,
@@ -68,4 +68,4 @@ export default compose(
       }
     }
   )
-)(InstrumentItem)
+)(ScoreInstrumentItem)

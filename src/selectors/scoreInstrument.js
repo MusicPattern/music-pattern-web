@@ -9,7 +9,7 @@ export default createCachedSelector(
   (scoreInstruments, instrumentId, positionIndex) => {
     if (instrumentId) {
       return scoreInstruments.find(scoreInstrument =>
-      scoreInstrument.instrumentId === instrumentId)
+        scoreInstrument.instrumentId === instrumentId)
     }
     return scoreInstruments.find(scoreInstrument =>
       scoreInstrument.positionIndex === positionIndex)

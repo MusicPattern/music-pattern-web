@@ -7,6 +7,7 @@ function pitchToToneNote (index) {
   return `${notes[noteIndex]}${levelIndex}`
 }
 function durationToToneDuration (number) {
+  console.log('number', number)
   if (number >= 1) {
     return `${number}m`
   } else {
@@ -35,6 +36,29 @@ export default class Instrument {
     this.handleSetupSuccess && this.handleSetupSuccess()
     Tone.Pattern.handleInstrumentSetupSuccess()
   }
+
+  /*
+  trigger (time, event, part) {
+    const {
+      duration,
+      pitch
+    } = event
+
+    const toneDuration = durationToToneDuration(duration)
+    const toneNote = pitchToToneNote(pitch)
+
+    console.log('OUAI',
+      this.toneInstrument,
+      toneNote,
+      toneDuration,
+      time
+    )
+
+    this.toneInstrument.triggerAttackRelease(toneNote, "8n", time)
+
+
+  }
+  */
 
   part (key, part) {
 
@@ -66,7 +90,7 @@ export default class Instrument {
       } else {
         const previousPart = this.partition[`0/${indexes[1] - 1}`]
         if (previousPart) {
-          const previousEvent = previousPart.events.slice(-1)[0]
+          const previousEvent = previousPart._events.slice(-1)[0]
           rootInterval = previousEvent.pitch
           rootDuration = previousEvent.time + Tone.Time(previousEvent.toneDuration)
                                                   .toSeconds()
@@ -82,7 +106,7 @@ export default class Instrument {
       )
       const previousPart = this.partition[`${indexes[0] - 1}/${previousPatternIndex}`]
       if (previousPart) {
-        const previousEvent = previousPart.events.slice(-1)[0]
+        const previousEvent = previousPart._events.slice(-1)[0]
         rootInterval = previousEvent.pitch
         rootDuration = previousEvent.time + Tone.Time(previousEvent.toneDuration)
                                                 .toSeconds()
@@ -96,43 +120,65 @@ export default class Instrument {
     events.forEach((event, index) => {
       const {
         duration,
-        interval
-      } = event
-      let {
+        interval,
         pitch,
         time
       } = event
-
       if (typeof pitch === "undefined") {
-        pitch = index === 0
+        event.pitch = index === 0
           ? rootInterval
           : events[index - 1].pitch + interval
-
+        event.toneNote = pitchToToneNote(event.pitch)
       }
-
-      const toneNote = pitchToToneNote(pitch)
-      const toneDuration = durationToToneDuration(duration)
-
       if (typeof time === "undefined") {
+        event.toneDuration = durationToToneDuration(duration)
         if (index === 0) {
-         time = Tone.Time(rootDuration)
+          event.time = Tone.Time(rootDuration)
                            .toSeconds()
         } else {
-          time = events[index - 1].time +
+          event.time = events[index - 1].time +
             Tone.Time(events[index - 1].toneDuration)
                 .toSeconds()
         }
       }
-
-      event.pitch = pitch
-      event.time = time
-      event.toneDuration = toneDuration
-
-      this.toneInstrument.triggerAttackRelease(toneNote, "8n", time)
-
     })
 
-    this.partition[key] = Object.assign({}, part, { events })
+
+
+    events.forEach(event => {
+      const {
+        time,
+        toneNote
+      } = event
+
+      console.log('toneNote', toneNote, 'time', time)
+
+      this.toneInstrument.triggerAttackRelease(toneNote, "8n", time)
+    })
+
+
+
+    /*
+    Tone.Transport.schedule(function(time){
+    	//do something with the time
+    }, "16:0:0");
+
+    console.log('events', events)
+
+    const tonePart = new Tone.Part(
+      (time, event) => this.trigger(time, event, part),
+      events
+    )
+    Object.assign(tonePart, part)
+    */
+    /*
+    tonePart._events.forEach((_event, index) =>
+      Object.assign(_event, events[index]))
+
+    tonePart.start(rootDuration)
+
+    this.partition[key] = tonePart
+    */
   }
 
   cancel () {

@@ -10,21 +10,17 @@ import scoreInstrumentsSelector from '../../selectors/scoreInstruments'
 class InstrumentsManager extends Component {
 
   onLoopClick = () => {
-    Tone.Player.loop()
-  }
-
-  onPartClick = () => {
-    Tone.Player.part()
+    Tone.Pattern.loop()
   }
 
   onStartStopClick = () => {
-    Tone.Player.isPlaying
-      ? Tone.Player.stop()
-      : Tone.Player.start()
+    Tone.Pattern.isPlaying
+      ? Tone.Pattern.stop()
+      : Tone.Pattern.start()
   }
 
   componentDidMount () {
-    Tone.Player.connect("manager", () => this.forceUpdate())
+    Tone.Pattern.connect("manager", () => this.forceUpdate())
   }
 
   render () {
@@ -35,11 +31,11 @@ class InstrumentsManager extends Component {
 
     return (
       <div>
-        {Tone.Player.isSetup && (
+        {Tone.Pattern.isSetup && (
           <div>
             <button className='button is-primary' onClick={this.onStartStopClick}>
               {
-                Tone.Player.isPlaying
+                Tone.Pattern.isPlaying
                   ? 'STOP'
                   : 'START'
               }

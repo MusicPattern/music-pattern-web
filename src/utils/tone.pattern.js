@@ -2,13 +2,14 @@ import Tone from 'tone'
 
 import Instrument from './instrument'
 
-export default class Player {
+window.Tone = Tone
+
+export default class Pattern {
 	constructor() {
 		this.band = {}
 		this.subscribers = {}
 		this.isPart = false
     this.isSetup = false
-		this.isSource = false
 	}
 
 	connect (key, callback) {
@@ -52,17 +53,10 @@ export default class Player {
 		this.dispatch("part")
 	}
 
-	source () {
-		Object.values(this.band).forEach(instrument => {
-			instrument.source()
-		})
-		this.isSource = true
-	}
-
 	start () {
 
 		if (!this.isSetup) {
-			console.Log('Tone Player not setup')
+			console.log('Tone Pattern not setup')
 			return
 		}
 
@@ -70,10 +64,6 @@ export default class Player {
 
 		if (!this.isPart) {
 			this.part()
-		}
-
-		if (!this.isSource) {
-			this.source()
 		}
 
     Tone.Transport.start()
@@ -93,4 +83,4 @@ export default class Player {
 
 }
 
-Tone.Player = new Player()
+Tone.Pattern = new Pattern()
