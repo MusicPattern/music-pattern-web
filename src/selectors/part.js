@@ -21,11 +21,11 @@ export default createCachedSelector(
     melodySelector(state, patternId),
   (state, scoreId, staffId, voiceId, patternId) =>
     rhythmSelector(state, patternId),
-  (scoreStaff, staff, staffVoice, voice, voicePattern, melody, rhythm, key) => {
+  (scoreStaff, staff, staffVoice, voice, voicePattern, melody, rhythm) => {
 
     const {
-      rootPitch,
-      rootTime,
+      rootDuration,
+      rootInterval,
     } = voicePattern
 
     let durations, intervals
@@ -48,10 +48,26 @@ export default createCachedSelector(
     )
     intervals = intervals.map(interval => parseInt(interval, 10))
 
-    const events = durations.map((duration, index) => ({
-      duration,
-      interval: intervals[index]
-    }))
+    const probabilities = voicePattern.probabilities.split(',')
+
+    const events = durations.map((duration, index) => {
+      let interval = intervals[index]
+      if (typeof interval === "undefined") {
+        console.warn(`interval is not defined for this part here`)
+        interval = 0
+      }
+
+      let probability = probabilities[index]
+      if (typeof probability === "undefined") {
+        probability = 1
+      }
+
+      return {
+        duration,
+        interval,
+        probability
+      }
+    })
 
     const indexes = [
       (scoreStaff || {}).positionIndex,
@@ -63,8 +79,8 @@ export default createCachedSelector(
       indexes,
       events,
       key: indexes.join('/'),
-      rootPitch,
-      rootTime, 
+      rootDuration,
+      rootInterval,
     }
   }
 )((state, scoreId, staffId, voiceId, patternId) =>

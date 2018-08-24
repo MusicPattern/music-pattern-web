@@ -7,10 +7,31 @@ function pitchToToneNote (index) {
   return `${notes[noteIndex]}${levelIndex}`
 }
 function durationToToneDuration (number) {
+
+  if (number === 0) {
+    return "0m"
+  }
+
+  /*
   if (number >= 1) {
     return `${number}m`
   } else {
     return `${1/number}n`
+  }
+  */
+
+  /*
+  if (number >= 2) {
+    return `${number-1}m`
+  } else {
+    return `${2/number}n`
+  }
+  */
+
+  if (number >= 4) {
+    return `${number-2}m`
+  } else {
+    return `${4/number}n`
   }
 }
 
@@ -106,19 +127,24 @@ export default class Instrument {
 
     events.forEach((event, index) => {
       const {
-        duration,
-        interval
+        duration
       } = event
       let {
+        interval,
         pitch,
+        probability,
         time
       } = event
+
+      if (typeof interval === "undefined") {
+        console.warn(`interval should not be undefined here in ${this.name} ${part.name}`)
+        interval = 0
+      }
 
       if (typeof pitch === "undefined") {
         pitch = index === 0
           ? rootInterval
           : events[index - 1].pitch + interval
-
       }
 
       const toneNote = pitchToToneNote(pitch)
@@ -126,8 +152,8 @@ export default class Instrument {
 
       if (typeof time === "undefined") {
         if (index === 0) {
-         time = Tone.Time(rootDuration)
-                           .toSeconds()
+          time = Tone.Time(durationToToneDuration(rootDuration))
+                     .toSeconds()
         } else {
           time = events[index - 1].time +
             Tone.Time(events[index - 1].toneDuration)
@@ -139,11 +165,13 @@ export default class Instrument {
       event.time = time
       event.toneDuration = toneDuration
 
-      this.toneInstrument.triggerAttackRelease(toneNote, toneDuration, time)
-
+      if (Math.random() <= probability) {
+        this.toneInstrument.triggerAttackRelease(toneNote, toneDuration, time)
+      }
     })
 
     this.partition[key] = Object.assign({}, part, { events })
+
   }
 
   cancel () {
