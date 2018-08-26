@@ -12,30 +12,79 @@ import voicePatternSelector from '../../selectors/voicePattern'
 
 class PatternItem extends Component {
 
-  componentDidMount () {
-    const {
-      pattern,
-      staff,
-      voice
-    } = this.props
+  constructor () {
+    super()
+    this.state = {
+      toneInstrument: null,
+      tonePart: null
+    }
+  }
 
-    Tone.Pattern.connect(
-      `${get(staff, 'id')}${get(voice, 'id')}${pattern.id}`,
+  handleTonePatternInstrumentPart () {
+    const {
+      part,
+      scoreInstrument,
+      staffVoice,
+      toneKey
+    } = this.props
+    const {
+      isActive
+    } = (staffVoice || {})
+
+    if (!isActive) {
+      if (this.state.toneInstrument) {
+        this.state.toneInstrument.disconnect(toneKey)
+        this.setState({ toneInstrument: null })
+      }
+      if (this.state.tonePart) {
+        this.state.tonePart.disconnect(toneKey)
+        this.setState({ tonePart: null })
+      }
+      return
+    }
+
+    const toneInstrument = Tone.Pattern.instrument(scoreInstrument.id)
+
+    if (!toneInstrument) {
+      return
+    } else if (!this.state.toneInstrument) {
+      this.setState({ toneInstrument })
+    }
+
+    toneInstrument.connect(
+      toneKey,
       action => {
-        const {
-          part,
-          scoreInstrument
-        } = this.props
         if (action === "part") {
-          const instrument = Tone.Pattern.instrument(scoreInstrument.id)
-          if (!instrument) {
-            console.warn(`instrument not found for scoreInstrument ${scoreInstrument.id}`)
-            return
-          }
-          Tone.Pattern.instrument(scoreInstrument.id).part(part.key, part)
+          const tonePart = toneInstrument.part(toneKey, part)
+          this.setState({ tonePart })
         }
       }
     )
+  }
+
+  componentDidMount () {
+    this.handleTonePatternInstrumentPart()
+  }
+
+  componentDidUpdate (prevProps) {
+    const {
+      staffVoice
+    } = this.props
+    if (prevProps.staffVoice !== staffVoice) {
+      this.handleTonePatternInstrumentPart()
+    }
+  }
+
+  componentWillUnmount () {
+    const {
+      toneKey
+    } = this.props
+    const {
+      toneInstrument,
+      tonePart
+    } = this.state
+    toneInstrument && toneInstrument.disconnect(toneKey)
+    tonePart && tonePart.disconnect(toneKey)
   }
 
   render () {
@@ -70,12 +119,17 @@ export default compose(
       const voiceId = get(voice, 'id')
       const { id } = pattern
 
-      const { positionIndex } = (staffVoiceSelector(state, staffId, voiceId) || {})
+      const staffVoice = staffVoiceSelector(state, staffId, voiceId)
+      const { positionIndex } = (staffVoice || {})
       const part = partSelector(state, scoreId, staffId, voiceId, id)
+
+      const toneKey = `${staffId || ''}/${voiceId || ''}${id || ''}`
 
       return {
         part,
         scoreInstrument: scoreInstrumentSelector(state, scoreId, null, positionIndex),
+        staffVoice,
+        toneKey,
         voicePattern: voicePatternSelector(state, voiceId, id)
       }
     }

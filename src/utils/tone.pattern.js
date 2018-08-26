@@ -1,23 +1,14 @@
 import Tone from 'tone'
 
+import Dispatcher from './dispatcher'
 import Instrument from './instrument'
 
-window.Tone = Tone
-
-export default class Pattern {
+export default class Pattern extends Dispatcher {
 	constructor() {
+		super()
 		this.band = {}
-		this.subscribers = {}
 		this.isPart = false
-    this.isSetup = false
-	}
-
-	connect (key, callback) {
-		this.subscribers[key] = callback
-	}
-
-	dispatch (action) {
-		Object.values(this.subscribers).forEach(callback => callback(action))
+    this.isInstrumentsSetup = false
 	}
 
 	instrument(key, instrument) {
@@ -25,7 +16,7 @@ export default class Pattern {
 			return this.band[key]
 		}
 		if (instrument) {
-			const newInstrument = new Instrument(instrument)
+			const newInstrument = new Instrument(instrument, { pattern: this })
 			newInstrument.setup()
 			this.band[key] = newInstrument
 			return newInstrument
@@ -33,9 +24,9 @@ export default class Pattern {
 	}
 
 	handleInstrumentSetupSuccess () {
-		if (Object.values(this.band).every(instrument => instrument.isSetup)) {
-			this.isSetup = true
-			this.dispatch("setup")
+		if (Object.values(this.band).every(instrument => instrument.isInstrumentsSetup)) {
+			this.isInstrumentsSetup = true
+			this.dispatch("instruments-setup")
 		}
 	}
 
@@ -46,16 +37,19 @@ export default class Pattern {
 
 	part () {
 		Tone.Transport.cancel()
+
 		Object.values(this.band).forEach(instrument => {
 			instrument.cancel()
 		})
+
 		this.isPart = true
+
 		this.dispatch("part")
 	}
 
 	start () {
 
-		if (!this.isSetup) {
+		if (!this.isInstrumentsSetup) {
 			console.log('Tone Pattern not setup')
 			return
 		}

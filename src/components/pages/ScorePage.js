@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
+import Tone from 'tone'
 
 import Main from '../layout/Main'
 import InstrumentsManager from '../managers/InstrumentsManager'
@@ -27,6 +28,16 @@ class ScorePage extends Component {
         handleFail,
         normalizer: scoreNormalizer
       }))
+  }
+
+  handleTonePattern () {
+    Tone.Pattern.connect("score", action => {
+      action === "setup" && this.forceUpdate()
+    })
+  }
+
+  componentDidMount () {
+    this.handleTonePattern()
   }
 
   render () {

@@ -9,7 +9,7 @@ import scoreSelector from '../../selectors/score'
 import soundsSelector from '../../selectors/sounds'
 
 class ScoreInstrumentItem extends Component {
-  handlePlayerInstrument () {
+  handleTonePatternInstrument () {
     const {
       scoreInstrument,
       instrument,
@@ -22,7 +22,7 @@ class ScoreInstrumentItem extends Component {
   }
 
   componentDidMount () {
-    this.handlePlayerInstrument()
+    this.handleTonePatternInstrument()
   }
 
   componentDidUpdate (prevProps) {
@@ -34,7 +34,7 @@ class ScoreInstrumentItem extends Component {
       prevProps.instrument !== instrument ||
       prevProps.sounds !== sounds
     ) {
-      this.handlePlayerInstrument()
+      this.handleTonePatternInstrument()
     }
   }
 
