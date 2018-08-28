@@ -54,6 +54,9 @@ class VoiceItem extends Component {
 
     if (!isActive) {
       if (this.state.track) {
+        if (get(this.state, 'track.toneInstrument._volume')) {
+          this.state.track.toneInstrument.dispose()
+        }
         this.state.track.disconnect(toneKey)
         this.setState({ track: null })
       }
@@ -66,6 +69,10 @@ class VoiceItem extends Component {
       return
     } else if (!this.state.track) {
       this.setState({ track })
+    }
+
+    if (!track.isTracksSetup) {
+      track.dispatch("part")
     }
 
     track.connect(
@@ -94,7 +101,10 @@ class VoiceItem extends Component {
     const {
       staffVoice
     } = this.props
-    if (prevProps.staffVoice !== staffVoice) {
+    if (
+      prevProps.staffVoice !== staffVoice
+    ) {
+      console.log('OUAI NON', staffVoice)
       this.handleToneSequencerTrack()
     }
   }

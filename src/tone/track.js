@@ -86,4 +86,9 @@ export default class Track extends Dispatcher {
     this.isMuted = isMuted
     this.dispatch("mute")
   }
+
+  part () {
+    this.cancel()
+    this.dispatch('part')
+  }
 }

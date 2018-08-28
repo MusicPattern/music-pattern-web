@@ -9,6 +9,7 @@ export default class Sequencer extends Dispatcher {
 		this.band = {}
 		this.isPart = false
     this.isTracksSetup = false
+		this.times = []
 	}
 
 	track(key, instrument) {
@@ -39,8 +40,7 @@ export default class Sequencer extends Dispatcher {
 		Tone.Transport.cancel()
 
 		Object.values(this.band).forEach(track => {
-			track.cancel()
-			track.dispatch('part')
+			track.part()
 		})
 
 		this.isPart = true
@@ -56,20 +56,26 @@ export default class Sequencer extends Dispatcher {
 
 		Tone.Transport.stop()
 
-		console.log('this.isPart', this.isPart)
+		/*
 		if (!this.isPart) {
+			console.log('on repart')
 			this.part()
 		}
-		console.log('Tone', Tone.Sequencer)
+		*/
+
+		const maxTime = Math.max(...this.times)
+		Tone.Transport.schedule(time => {
+			this.stop()
+		}, maxTime)
 
     Tone.Transport.start()
-
 		this.dispatch("start")
 	}
 
 	stop () {
 		Tone.Transport.stop()
 		this.dispatch("stop")
+		this.times = []
 	}
 
 }

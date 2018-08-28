@@ -109,6 +109,7 @@ export default class Section extends Dispatcher {
               this.dispatch("attack")
             })
           event.toneEvent.start(event.time)
+          Tone.Sequencer.times.push(event.time + Tone.Time(event.toneDuration).toSeconds())
       }
 
     })
