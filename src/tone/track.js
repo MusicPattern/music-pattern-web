@@ -1,15 +1,15 @@
 import Tone from 'tone'
 
 import Dispatcher from './dispatcher'
-import Part from './part'
+import Section from './section'
 import { pitchToToneNote } from './music'
 
-export default class Instrument extends Dispatcher {
+export default class Track extends Dispatcher {
   constructor (instrument = {}, config) {
     super()
     Object.assign(this, instrument, config)
     this.isMuted = false
-    this.isPartsSetup = false
+    this.isSectionsSetup = false
     this.isSetup = false
     this.partition = {}
   }
@@ -38,11 +38,10 @@ export default class Instrument extends Dispatcher {
     this.dispatch("setup")
     this.isSetup = true
     this.handleSetupSuccess && this.handleSetupSuccess()
-    Tone.Pattern.handleInstrumentSetupSuccess()
+    Tone.Sequencer.handleTrackSetupSuccess()
   }
 
-  part (key, part) {
-
+  section (key, part) {
     if (!this.isSetup) {
       console.log(`instrument ${this.name} is not setup to do a part`)
       return
@@ -53,28 +52,28 @@ export default class Instrument extends Dispatcher {
     }
 
     if (part) {
-			const newPart = new Part(part, { instrument: this })
-			newPart.setup()
-			this.partition[key] = newPart
-			return newPart
+			const newSection = new Section(part, { track: this })
+			newSection.setup()
+			this.partition[key] = newSection
+			return newSection
 		}
   }
 
-  handlePartSetupSuccess () {
+  handleSectionSetupSuccess () {
 		if (Object.values(this.partition).every(part => part.isSetup)) {
-			this.isPartsSetup = true
-			this.dispatch("parts-setup")
+			this.isSectionsSetup = true
+			this.dispatch("sections-setup")
 		}
 	}
 
-  removePart(key) {
-    const part = this.partition[key]
-    if (!part) {
+  removeSection(key) {
+    const section = this.partition[key]
+    if (!section) {
       return
     }
-    part.events.forEach(event => event.toneEvent.dispose())
+    section.events.forEach(event => event.toneEvent.dispose())
     key && delete this.partition[key]
-    this.dispatch('removePart')
+    this.dispatch('removeSection')
   }
 
   cancel () {
@@ -83,7 +82,7 @@ export default class Instrument extends Dispatcher {
   }
 
   mute (isMuted) {
-    Object.values(this.partition).forEach(part => part.mute(isMuted))
+    Object.values(this.partition).forEach(section => section.mute(isMuted))
     this.isMuted = isMuted
     this.dispatch("mute")
   }

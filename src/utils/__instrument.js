@@ -34,7 +34,7 @@ export default class Instrument {
 
     this.isSetup = true
     this.handleSetupSuccess && this.handleSetupSuccess()
-    Tone.Pattern.handleInstrumentSetupSuccess()
+    Tone.Sequencer.handleInstrumentSetupSuccess()
   }
 
   /*

@@ -19,7 +19,7 @@ class VoiceItem extends Component {
     super()
     this.state = {
       isAttacking: false,
-      toneInstrument: null
+      track: null
     }
   }
 
@@ -37,12 +37,12 @@ class VoiceItem extends Component {
 
   onMuteClick = () => {
     const {
-      toneInstrument
+      track
     } = this.state
-    toneInstrument.mute(!toneInstrument.isMuted)
+    track.mute(!track.isMuted)
   }
 
-  handleTonePatternInstrument () {
+  handleToneSequencerTrack () {
     const {
       scoreInstrument,
       staffVoice,
@@ -53,22 +53,22 @@ class VoiceItem extends Component {
     } = (staffVoice || {})
 
     if (!isActive) {
-      if (this.state.toneInstrument) {
-        this.state.toneInstrument.disconnect(toneKey)
-        this.setState({ toneInstrument: null })
+      if (this.state.track) {
+        this.state.track.disconnect(toneKey)
+        this.setState({ track: null })
       }
       return
     }
 
-    const toneInstrument = Tone.Pattern.instrument(scoreInstrument.id)
+    const track = Tone.Sequencer.track(scoreInstrument.id)
 
-    if (!toneInstrument) {
+    if (!track) {
       return
-    } else if (!this.state.toneInstrument) {
-      this.setState({ toneInstrument })
+    } else if (!this.state.track) {
+      this.setState({ track })
     }
 
-    toneInstrument.connect(
+    track.connect(
       toneKey,
       action => {
         if (action === "attack" || action === "release") {
@@ -87,7 +87,7 @@ class VoiceItem extends Component {
   }
 
   componentDidMount () {
-    this.handleTonePatternInstrument()
+    this.handleToneSequencerTrack()
   }
 
   componentDidUpdate (prevProps) {
@@ -95,7 +95,7 @@ class VoiceItem extends Component {
       staffVoice
     } = this.props
     if (prevProps.staffVoice !== staffVoice) {
-      this.handleTonePatternInstrument()
+      this.handleToneSequencerTrack()
     }
   }
 
@@ -104,12 +104,12 @@ class VoiceItem extends Component {
       toneKey
     } = this.props
     const {
-      toneInstrument
+      track
     } = this.state
 
     this.attackTimeout && clearTimeout(this.attackTimeout)
-    Tone.Pattern.disconnect(toneKey)
-    toneInstrument && toneInstrument.disconnect(toneKey)
+    Tone.Sequencer.disconnect(toneKey)
+    track && track.disconnect(toneKey)
   }
 
   render () {
@@ -128,7 +128,7 @@ class VoiceItem extends Component {
     } = (staffVoice || {})
     const {
       isAttacking,
-      toneInstrument
+      track
     } = this.state
 
     return (
@@ -142,10 +142,10 @@ class VoiceItem extends Component {
           }
         </button>
         {
-          toneInstrument && (
+          track && (
             <button className="button is-secondary" onClick={this.onMuteClick}>
               {
-                toneInstrument.isMuted
+                track.isMuted
                   ? "Unmute"
                   : "Mute"
               }

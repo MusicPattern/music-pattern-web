@@ -31,7 +31,7 @@ class ScorePage extends Component {
   }
 
   handleTonePattern () {
-    Tone.Pattern.connect("score", action => {
+    Tone.Sequencer.connect("score", action => {
       action === "setup" && this.forceUpdate()
     })
   }

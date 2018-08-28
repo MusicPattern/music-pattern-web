@@ -2,4 +2,4 @@ import '../styles/index.scss'
 import 'typeface-barlow'
 
 import './icon'
-import './tone.pattern'
+import '../tone'

@@ -3,7 +3,7 @@ import Tone from 'tone'
 import Dispatcher from './dispatcher'
 import { durationToToneDuration, pitchToToneNote } from './music'
 
-export default class Part extends Dispatcher {
+export default class Section extends Dispatcher {
   constructor (part = {}, config) {
     super()
     Object.assign(this, part, config)
@@ -14,11 +14,11 @@ export default class Part extends Dispatcher {
   setup () {
     const {
       indexes,
-      instrument
+      track
     } = this
     const {
       partition
-    } = instrument
+    } = track
     let {
       rootDuration,
       rootInterval
@@ -33,14 +33,14 @@ export default class Part extends Dispatcher {
           ? rootDuration
           : 0
       } else {
-        const previousPart = partition[`0/${indexes[1] - 1}`]
-        if (previousPart) {
-          const previousEvent = previousPart.events.slice(-1)[0]
+        const previousSection = partition[`0/${indexes[1] - 1}`]
+        if (previousSection) {
+          const previousEvent = previousSection.events.slice(-1)[0]
           rootInterval = previousEvent.pitch
           rootDuration = previousEvent.time + Tone.Time(previousEvent.toneDuration)
                                                   .toSeconds()
         } else {
-          console.log(`previousPart not found for ${this.name} 0/${indexes[1] - 1}`)
+          console.log(`previousSection not found for ${this.name} 0/${indexes[1] - 1}`)
         }
       }
     } else {
@@ -49,14 +49,14 @@ export default class Part extends Dispatcher {
           .filter(part => part.indexes[0] === indexes[0] - 1)
           .map(part => part.indexes[1])
       )
-      const previousPart = partition[`${indexes[0] - 1}/${previousPatternIndex}`]
-      if (previousPart) {
-        const previousEvent = previousPart.events.slice(-1)[0]
+      const previousSection = partition[`${indexes[0] - 1}/${previousPatternIndex}`]
+      if (previousSection) {
+        const previousEvent = previousSection.events.slice(-1)[0]
         rootInterval = previousEvent.pitch
         rootDuration = previousEvent.time + Tone.Time(previousEvent.toneDuration)
                                                 .toSeconds()
       } else {
-        console.log(`previousPart not found for ${this.name} ${indexes[0] - 1}/${previousPatternIndex}`)
+        console.log(`previousSection not found for ${this.name} ${indexes[0] - 1}/${previousPatternIndex}`)
       }
     }
 
@@ -64,7 +64,7 @@ export default class Part extends Dispatcher {
 
     this.events.forEach((event, index) => {
       if (typeof event.interval === "undefined") {
-        console.warn(`interval should not be undefined here in ${instrument.name} ${this.name}`)
+        console.warn(`interval should not be undefined here in ${track.name} ${this.name}`)
         event.interval = 0
       }
 
@@ -100,7 +100,7 @@ export default class Part extends Dispatcher {
       event.toneEvent = new Tone.Event(
         time => {
           if (Math.random() <= event.probability) {
-            this.toneInstrument.triggerAttackRelease(
+            this.track.toneInstrument.triggerAttackRelease(
               event.toneNote,
               event.toneDuration
             )
@@ -116,7 +116,7 @@ export default class Part extends Dispatcher {
     this.dispatch("setup")
     this.isSetup = true
     this.handleSetupSuccess && this.handleSetupSuccess()
-    Tone.Pattern.handlePartSetupSuccess()
+    this.track.handleSectionSetupSuccess()
 
   }
 

@@ -15,12 +15,12 @@ class PatternItem extends Component {
   constructor () {
     super()
     this.state = {
-      toneInstrument: null,
-      tonePart: null
+      track: null,
+      section: null
     }
   }
 
-  handleTonePatternInstrumentPart () {
+  handleToneSequencerTrackSection () {
     const {
       part,
       scoreInstrument,
@@ -32,38 +32,38 @@ class PatternItem extends Component {
     } = (staffVoice || {})
 
     if (!isActive) {
-      if (this.state.toneInstrument) {
-        this.state.toneInstrument.disconnect(toneKey)
-        this.setState({ toneInstrument: null })
+      if (this.state.track) {
+        this.state.track.disconnect(toneKey)
+        this.setState({ track: null })
       }
-      if (this.state.tonePart) {
-        this.state.tonePart.disconnect(toneKey)
-        this.setState({ tonePart: null })
+      if (this.state.section) {
+        this.state.section.disconnect(toneKey)
+        this.setState({ section: null })
       }
       return
     }
 
-    const toneInstrument = Tone.Pattern.instrument(scoreInstrument.id)
+    const track = Tone.Sequencer.track(scoreInstrument.id)
 
-    if (!toneInstrument) {
+    if (!track) {
       return
-    } else if (!this.state.toneInstrument) {
-      this.setState({ toneInstrument })
+    } else if (!this.state.track) {
+      this.setState({ track })
     }
 
-    toneInstrument.connect(
+    track.connect(
       toneKey,
       action => {
         if (action === "part") {
-          const tonePart = toneInstrument.part(toneKey, part)
-          this.setState({ tonePart })
+          const section = track.section(toneKey, part)
+          this.setState({ section })
         }
       }
     )
   }
 
   componentDidMount () {
-    this.handleTonePatternInstrumentPart()
+    this.handleToneSequencerTrackSection()
   }
 
   componentDidUpdate (prevProps) {
@@ -71,7 +71,7 @@ class PatternItem extends Component {
       staffVoice
     } = this.props
     if (prevProps.staffVoice !== staffVoice) {
-      this.handleTonePatternInstrumentPart()
+      this.handleToneSequencerTrackSection()
     }
   }
 
@@ -80,11 +80,11 @@ class PatternItem extends Component {
       toneKey
     } = this.props
     const {
-      toneInstrument,
-      tonePart
+      track,
+      section
     } = this.state
-    toneInstrument && toneInstrument.disconnect(toneKey)
-    tonePart && tonePart.disconnect(toneKey)
+    track && track.disconnect(toneKey)
+    section && section.disconnect(toneKey)
   }
 
   render () {
