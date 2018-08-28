@@ -1,7 +1,7 @@
 import Tone from 'tone'
 
-import Dispatcher from './dispatcher'
-import Section from './section'
+import Dispatcher from './Dispatcher'
+import Section from './Section'
 import { pitchToToneNote } from './music'
 
 export default class Track extends Dispatcher {

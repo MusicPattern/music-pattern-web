@@ -1,6 +1,6 @@
 import Tone from 'tone'
 
-import Dispatcher from './dispatcher'
+import Dispatcher from './Dispatcher'
 import { durationToToneDuration, pitchToToneNote } from './music'
 
 export default class Section extends Dispatcher {
@@ -97,19 +97,19 @@ export default class Section extends Dispatcher {
         event.probability = 1
       }
 
-      event.toneEvent = new Tone.Event(
-        time => {
-          if (Math.random() <= event.probability) {
-            this.track.toneInstrument.triggerAttackRelease(
-              event.toneNote,
-              event.toneDuration
-            )
-            this.dispatch("attack")
-          }
-        }
-      )
-
-      event.toneEvent.start(event.time)
+      if (Math.random() <= event.probability) {
+          this.track.toneInstrument.triggerAttackRelease(
+            event.toneNote,
+            event.toneDuration,
+            event.time
+          )
+          event.toneEvent = new Tone.Event(
+            time => {
+              this.track.dispatch("attack")
+              this.dispatch("attack")
+            })
+          event.toneEvent.start(event.time)
+      }
 
     })
 

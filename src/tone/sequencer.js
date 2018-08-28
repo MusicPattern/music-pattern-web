@@ -1,14 +1,13 @@
 import Tone from 'tone'
 
-import Dispatcher from './dispatcher'
-import Track from './track'
+import Dispatcher from './Dispatcher'
+import Track from './Track'
 
 export default class Sequencer extends Dispatcher {
 	constructor() {
 		super()
 		this.band = {}
 		this.isPart = false
-		this.isPlaying = false
     this.isTracksSetup = false
 	}
 
@@ -58,26 +57,22 @@ export default class Sequencer extends Dispatcher {
 		Tone.Transport.stop()
 
 		console.log('this.isPart', this.isPart)
-
 		if (!this.isPart) {
 			this.part()
 		}
+		console.log('Tone', Tone.Sequencer)
 
     Tone.Transport.start()
-
-		this.isPlaying = true
 
 		this.dispatch("start")
 	}
 
 	stop () {
 		Tone.Transport.stop()
-
-		this.isPlaying = false
-
 		this.dispatch("stop")
 	}
 
 }
 
 Tone.Sequencer = new Sequencer()
+window.Tone = Tone

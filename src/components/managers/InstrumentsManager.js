@@ -14,15 +14,21 @@ class InstrumentsManager extends Component {
   }
 
   onStartStopClick = () => {
-    Tone.Sequencer.isPlaying
+    Tone.Transport.state === "started"
       ? Tone.Sequencer.stop()
       : Tone.Sequencer.start()
   }
 
   componentDidMount () {
     Tone.Sequencer.connect("manager", action => {
-      if (action === "tracks-setup") {
-        this.forceUpdate()
+      switch (action) {
+        case "tracks-setup":
+        case "start":
+        case "stop":
+          this.forceUpdate()
+          break
+        default:
+          return
       }
     })
   }
@@ -39,7 +45,7 @@ class InstrumentsManager extends Component {
           <div>
             <button className='button is-primary' onClick={this.onStartStopClick}>
               {
-                Tone.Sequencer.isPlaying
+                Tone.Transport.state === "started"
                   ? 'STOP'
                   : 'START'
               }
