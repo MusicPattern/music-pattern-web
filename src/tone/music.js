@@ -1,3 +1,5 @@
+import Tone from "tone"
+
 export const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 export function pitchToToneNote (index) {
@@ -33,4 +35,17 @@ export function durationToToneDuration (number) {
   } else {
     return `${4/number}n`
   }
+}
+
+export function durationToToneDurationTime (number) {
+  const decimal = number - Math.floor(number)
+  const integer = number - decimal
+
+  const decimalToneDuration = durationToToneDuration(decimal)
+  const integerToneDuration = durationToToneDuration(integer)
+
+  const decimalToneDurationTime = Tone.Time(decimalToneDuration).toSeconds()
+  const integerToneDurationTime = Tone.Time(integerToneDuration).toSeconds()
+
+  return integerToneDurationTime + decimalToneDurationTime
 }

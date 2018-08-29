@@ -7,9 +7,9 @@ export default class Sequencer extends Dispatcher {
 	constructor() {
 		super()
 		this.band = {}
+		this.endTimes = []
 		this.isPart = false
     this.isTracksSetup = false
-		this.times = []
 	}
 
 	track(key, instrument) {
@@ -63,10 +63,12 @@ export default class Sequencer extends Dispatcher {
 		}
 		*/
 
-		const maxTime = Math.max(...this.times)
+		const maxEndTime = Math.max(...this.endTimes)
+		console.log('this.times', this.endTimes, maxEndTime)
 		Tone.Transport.schedule(time => {
+			console.log('BEN ALORS')
 			this.stop()
-		}, maxTime)
+		}, maxEndTime)
 
     Tone.Transport.start()
 		this.dispatch("start")
@@ -75,7 +77,7 @@ export default class Sequencer extends Dispatcher {
 	stop () {
 		Tone.Transport.stop()
 		this.dispatch("stop")
-		this.times = []
+		this.endTimes = []
 	}
 
 }
