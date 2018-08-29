@@ -1,8 +1,10 @@
 import {
-  requestData
+  requestData,
+  withLogin
 } from 'pass-culture-shared'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { compose } from 'redux'
 
 import ScoreItem from '../items/ScoreItem'
 import Main from '../layout/Main'
@@ -38,8 +40,11 @@ class ScoresPage extends Component {
   }
 }
 
-export default connect(
-  state => ({
-    scores: state.data.scores
-  })
+export default compose(
+  withLogin({ failRedirect: "/signin" }),
+  connect(
+    state => ({
+      scores: state.data.scores
+    })
+  )
 )(ScoresPage)

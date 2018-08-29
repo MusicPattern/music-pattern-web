@@ -150,7 +150,6 @@ class Main extends Component {
 }
 
 export default compose(
-  withLogin({ failRedirect: '/signin' }),
   withBlock,
   connect(
     state => ({
