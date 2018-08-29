@@ -1,3 +1,4 @@
+import classnames from 'classnames'
 import get from 'lodash.get'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
@@ -5,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { compose } from 'redux'
 import Tone from 'tone'
 
+import PatternForm from '../forms/PatternForm'
 import scoreInstrumentSelector from '../../selectors/scoreInstrument'
 import staffVoiceSelector from '../../selectors/staffVoice'
 import partSelector from '../../selectors/part'
@@ -90,6 +92,8 @@ class PatternItem extends Component {
   render () {
     const {
       pattern,
+      staff,
+      voice,
       voicePattern
     } = this.props
     const {
@@ -99,9 +103,17 @@ class PatternItem extends Component {
       rootPitch,
       rootTime
     } = (voicePattern || {})
+
     return (
-      <div className='box'>
-        Pattern: {name} {rootPitch} {rootTime}
+      <div className={classnames('box', { 'is-primary': !pattern })}>
+        {!pattern
+          ? <PatternForm pattern={pattern} staff={staff} voice={voice}/>
+          : (
+            <div>
+              Pattern: {name} {rootPitch} {rootTime}
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -117,11 +129,11 @@ export default compose(
       const { scoreId } = match.params
       const staffId = get(staff, 'id')
       const voiceId = get(voice, 'id')
-      const { id } = pattern
+      const { id } = (pattern || {})
 
       const staffVoice = staffVoiceSelector(state, staffId, voiceId)
       const { positionIndex } = (staffVoice || {})
-      const part = partSelector(state, scoreId, staffId, voiceId, id)
+      const part = id && partSelector(state, scoreId, staffId, voiceId, id)
 
       const toneKey = `${staffId || ''}/${voiceId || ''}${id || ''}`
 

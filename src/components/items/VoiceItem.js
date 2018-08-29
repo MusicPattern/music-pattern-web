@@ -18,6 +18,7 @@ class VoiceItem extends Component {
   constructor() {
     super()
     this.state = {
+      isAdding: true,
       isAttacking: false,
       track: null
     }
@@ -137,6 +138,7 @@ class VoiceItem extends Component {
       positionIndex
     } = (staffVoice || {})
     const {
+      isAdding,
       isAttacking,
       track
     } = this.state
@@ -170,6 +172,9 @@ class VoiceItem extends Component {
           Attack
         </button>
         Voice: {name}
+        {isAdding && <PatternItem
+          staff={staff}
+          voice={voice} />}
         {isActive && patterns.map(pattern =>
           <PatternItem key={pattern.id}
             pattern={pattern}
